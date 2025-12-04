@@ -8,8 +8,12 @@
 <body>
     <p>Hello {{ $data['member_name'] }},</p>
 
-    <p>Attached is your QR code, which serves as your ID throughout {{ $data['session_name'] }} for attending activities
-        and registering presence in {{ $data['committee_name'] }}.</p>
+    <p>Attached is your QR code, which serves as your ID
+        @if (!empty($data['session_name']))
+            throughout {{ $data['session_name'] }}
+        @endif
+        for attending activities and registering presence in {{ $data['committee_name'] }}.
+    </p>
 
     <p>Please keep it safe and do not share it with others.</p>
 

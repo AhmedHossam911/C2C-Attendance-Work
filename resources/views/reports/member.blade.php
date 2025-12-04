@@ -5,12 +5,16 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <form action="{{ route('reports.member') }}" method="GET">
+            <form action="{{ route('reports.member') }}" method="GET" class="d-flex gap-2">
                 <div class="input-group">
                     <input type="text" name="search" class="form-control" placeholder="Search by ID, Name, or Email"
                         value="{{ request('search') }}">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
+                <a href="{{ route('reports.export.members', ['search' => request('search')]) }}"
+                    class="btn btn-success text-nowrap">
+                    <i class="bi bi-file-earmark-excel"></i> Export Results
+                </a>
             </form>
         </div>
     </div>

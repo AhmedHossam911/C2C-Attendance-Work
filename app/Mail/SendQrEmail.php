@@ -25,8 +25,13 @@ class SendQrEmail extends Mailable
 
     public function envelope(): Envelope
     {
+        $subject = 'Membership QR – ' . $this->data['committee_name'];
+        if (!empty($this->data['session_name'])) {
+            $subject .= ' – ' . $this->data['session_name'];
+        }
+
         return new Envelope(
-            subject: 'Membership QR – ' . $this->data['committee_name'] . ' – ' . $this->data['session_name'],
+            subject: $subject,
         );
     }
 

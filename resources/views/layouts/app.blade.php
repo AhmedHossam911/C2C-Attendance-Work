@@ -57,8 +57,10 @@
                                     Reports
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ route('reports.index') }}">Committee Reports</a>
-                                    </li>
+                                    @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
+                                        <li><a class="dropdown-item" href="{{ route('reports.index') }}">Committee
+                                                Reports</a></li>
+                                    @endif
                                     <li><a class="dropdown-item" href="{{ route('reports.member') }}">Member Search</a>
                                     </li>
                                 </ul>
@@ -113,8 +115,6 @@
 
         @yield('content')
     </div>
-
-
 </body>
 
 </html>

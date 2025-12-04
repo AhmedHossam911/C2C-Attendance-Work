@@ -14,9 +14,11 @@ class SessionController extends Controller
         if ($user->hasRole('hr')) {
             // HR sees sessions for their committees
             $committeeIds = $user->committees->pluck('id');
-            $sessions = AttendanceSession::whereIn('committee_id', $committeeIds)->latest()->get();
+            $sessions = AttendanceSession::with('committee')->withCount('records')
+                ->whereIn('committee_id', $committeeIds)->latest()->get();
         } else {
-            $sessions = AttendanceSession::latest()->get();
+            $sessions = AttendanceSession::with('committee')->withCount('records')
+                ->latest()->get();
         }
         return view('sessions.index', compact('sessions'));
     }

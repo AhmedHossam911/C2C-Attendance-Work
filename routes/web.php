@@ -30,9 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
@@ -58,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Send QR Emails
         Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');
-        Route::post('/send-qr', [App\Http\Controllers\QrEmailController::class, 'send'])->name('qr.send');
+        Route::get('/qr-image/{id}', [App\Http\Controllers\QrEmailController::class, 'showImage'])->name('qr.image');
     });
 
     /*
@@ -97,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware(['checkRole:top_management,board,hr'])->group(function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/export-committees', [ReportController::class, 'exportCommittees'])->name('reports.export.committees');
         Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
+        Route::get('/reports/export-members', [ReportController::class, 'exportMembers'])->name('reports.export.members');
     });
 });

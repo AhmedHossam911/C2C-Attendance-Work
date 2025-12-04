@@ -14,77 +14,49 @@ use Illuminate\Support\Facades\Auth;
 
 class QrEmailController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $committees = Committee::all();
-        $sessions = AttendanceSession::where('status', 'open')->get(); // Or all sessions? Requirement says "Choose session".
-        // Let's show all sessions to be safe, or maybe just active ones. 
-        // Requirement doesn't specify status. "Choose session".
         $sessions = AttendanceSession::latest()->get();
 
-        return view('emails.send_qr', compact('committees', 'sessions'));
-    }
+        $query = User::query();
 
-    public function send(Request $request)
-    {
-        $request->validate([
-            'committee_id' => 'required|exists:committees,id',
-            'session_id' => 'required|exists:attendance_sessions,id',
-        ]);
-
-        $committee = Committee::findOrFail($request->committee_id);
-        $session = AttendanceSession::findOrFail($request->session_id);
-
-        // Get users of this committee
-        $users = $committee->users;
-
-        $sender = Auth::user();
-        $count = 0;
-
-        foreach ($users as $user) {
-            // Generate QR Code
-            // Format: "ID,Name,Committee" - wait, requirement says "Static Qr with ID ,Name , Committee"
-            // But previous scanner code parses "ID,Name,Committee" or just ID.
-            // Let's stick to just ID for robustness or the full string if requested.
-            // "Static Qr with ID ,Name , Committee"
-            $qrData = $user->id . ',' . $user->name . ',' . $committee->name;
-
-            $qrImage = QrCode::format('png')
-                ->size(300)
-                ->generate($qrData);
-
-            $data = [
-                'member_name' => $user->name,
-                'committee_name' => $committee->name,
-                'session_name' => $session->title,
-            ];
-
-            try {
-                // Send Email
-                // Note: Mail config must be set in .env
-                Mail::to($user->email)->send(new SendQrEmail($data, $qrImage));
-
-                // Log Success
-                EmailLog::create([
-                    'sender_id' => $sender->id,
-                    'recipient_email' => $user->email,
-                    'subject' => 'Membership QR – ' . $committee->name . ' – ' . $session->title,
-                    'status' => 'sent',
-                ]);
-
-                $count++;
-            } catch (\Exception $e) {
-                // Log Failure
-                EmailLog::create([
-                    'sender_id' => $sender->id,
-                    'recipient_email' => $user->email,
-                    'subject' => 'Membership QR – ' . $committee->name . ' – ' . $session->title,
-                    'status' => 'failed',
-                    'error_message' => $e->getMessage(),
-                ]);
-            }
+        // Filter by Committee
+        if ($request->filled('committee_id')) {
+            $query->whereHas('committees', function ($q) use ($request) {
+                $q->where('committees.id', $request->committee_id);
+            });
         }
 
-        return back()->with('success', "QR Codes sent to {$count} members.");
+        // Filter by Search (Name/Email)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Hide Top Management/Board from list unless user is Top Management
+        if (!Auth::user()->hasRole('top_management')) {
+            $query->whereNotIn('role', ['top_management', 'board']);
+        }
+
+        $users = $query->with('committees')->paginate(10)->withQueryString();
+
+        return view('emails.send_qr', compact('committees', 'sessions', 'users'));
+    }
+
+    public function showImage($id)
+    {
+        $user = User::findOrFail($id);
+        $qrData = $user->id; // Static QR Data (ID only)
+
+        $qrImage = QrCode::format('png')
+            ->size(300)
+            ->margin(1)
+            ->generate($qrData);
+
+        return response($qrImage)->header('Content-Type', 'image/png');
     }
 }

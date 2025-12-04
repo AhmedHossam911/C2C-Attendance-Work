@@ -1,11 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-    <h2>Committee Attendance Reports</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Committee Attendance Reports</h2>
+        <a href="{{ route('reports.export.committees') }}" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Export to Excel
+        </a>
+    </div>
 
     @foreach ($committees as $committee)
         <div class="card mb-4 mt-3">
-            <div class="card-header">
+            <div class="card-header bg-success text-white">
                 <h4>{{ $committee->name }}</h4>
             </div>
             <div class="card-body">

@@ -13,7 +13,15 @@ class ScanController extends Controller
 {
     public function index()
     {
-        $activeSessions = AttendanceSession::where('status', 'open')->get();
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            $committeeIds = $user->committees->pluck('id');
+            $activeSessions = AttendanceSession::where('status', 'open')
+                ->whereIn('committee_id', $committeeIds)
+                ->get();
+        } else {
+            $activeSessions = AttendanceSession::where('status', 'open')->get();
+        }
         return view('scan.index', compact('activeSessions'));
     }
 

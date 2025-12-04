@@ -44,14 +44,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Select Session</label>
-                            <select name="session_id" class="form-select" required>
-                                @foreach ($sessions as $session)
-                                    <option value="{{ $session->id }}">{{ $session->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <button type="submit" class="btn btn-primary">Download ZIP (Excel + Images)</button>
                     </form>
                 </div>
