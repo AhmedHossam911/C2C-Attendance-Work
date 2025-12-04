@@ -8,8 +8,22 @@
         @endif
     </div>
 
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ route('committees.index') }}" method="GET" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" name="search" class="form-control" placeholder="Search Committees..."
+                        value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="row">
-        @foreach ($committees as $committee)
+        @forelse ($committees as $committee)
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
@@ -21,6 +35,14 @@
                     </div>
                 </div>
             </div>
-        @endforeach
+        @empty
+            <div class="col-12">
+                <div class="alert alert-info">No committees found.</div>
+            </div>
+        @endforelse
+    </div>
+
+    <div class="mt-3">
+        {{ $committees->links() }}
     </div>
 @endsection

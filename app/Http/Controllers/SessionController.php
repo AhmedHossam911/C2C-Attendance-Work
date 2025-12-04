@@ -8,19 +8,40 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $query = AttendanceSession::with('committee')->withCount('records');
+
         if ($user->hasRole('hr')) {
             // HR sees sessions for their committees
             $committeeIds = $user->committees->pluck('id');
-            $sessions = AttendanceSession::with('committee')->withCount('records')
-                ->whereIn('committee_id', $committeeIds)->latest()->get();
-        } else {
-            $sessions = AttendanceSession::with('committee')->withCount('records')
-                ->latest()->get();
+            $query->whereIn('committee_id', $committeeIds);
         }
-        return view('sessions.index', compact('sessions'));
+
+        if ($request->filled('committee_id')) {
+            $query->where('committee_id', $request->committee_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $sessions = $query->latest()->paginate(10)->withQueryString();
+        $committees = \App\Models\Committee::all(); // For filter dropdown
+
+        return view('sessions.index', compact('sessions', 'committees'));
+    }
+
+    public function export(AttendanceSession $session)
+    {
+        // Check permission: HR can only export their own committee sessions
+        $user = Auth::user();
+        if ($user->hasRole('hr') && !$user->committees->contains($session->committee_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\SessionExport($session), 'session_' . $session->id . '_attendance.xlsx');
     }
 
     public function create()

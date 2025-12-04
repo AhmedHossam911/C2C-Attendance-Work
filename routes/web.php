@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
         // Sessions
         Route::resource('sessions', SessionController::class);
         Route::post('/sessions/{session}/toggle', [SessionController::class, 'toggleStatus'])->name('sessions.toggle');
+        Route::get('/sessions/{session}/export', [SessionController::class, 'export'])->name('sessions.export');
 
         // Committee View/Show
         Route::get('/committees', [CommitteeController::class, 'index'])->name('committees.index');
