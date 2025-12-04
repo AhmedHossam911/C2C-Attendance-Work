@@ -10,7 +10,12 @@ class CommitteeController extends Controller
 {
     public function index()
     {
-        $committees = Committee::with('users')->get();
+        $user = auth()->user();
+        if ($user->hasRole('hr')) {
+            $committees = $user->committees()->with('users')->get();
+        } else {
+            $committees = Committee::with('users')->get();
+        }
         return view('committees.index', compact('committees'));
     }
 
@@ -33,8 +38,14 @@ class CommitteeController extends Controller
 
     public function show(Committee $committee)
     {
-        $committee->load('users');
-        $users = User::where('status', 'active')->get();
+        $committee->load(['users' => function ($query) {
+            $query->where('role', '!=', 'top_management');
+        }]);
+
+        $users = User::where('status', 'active')
+            ->where('role', '!=', 'top_management')
+            ->get();
+
         return view('committees.show', compact('committee', 'users'));
     }
 

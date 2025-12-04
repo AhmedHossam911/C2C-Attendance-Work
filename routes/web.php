@@ -49,21 +49,31 @@ Route::middleware(['auth'])->group(function () {
 
         // Committees (Top Management can manage, except index/show)
         Route::resource('committees', CommitteeController::class)->except(['index', 'show']);
+
+        // Import/Export
+        Route::get('/export-import', [App\Http\Controllers\ExportImportController::class, 'index'])->name('export_import.index');
+        Route::post('/import-users', [App\Http\Controllers\ExportImportController::class, 'importUsers'])->name('import.users');
+        Route::get('/import-template', [App\Http\Controllers\ExportImportController::class, 'downloadTemplate'])->name('import.template');
+        Route::post('/export-qr', [App\Http\Controllers\ExportImportController::class, 'exportQrData'])->name('export.qr');
+
+        // Send QR Emails
+        Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');
+        Route::post('/send-qr', [App\Http\Controllers\QrEmailController::class, 'send'])->name('qr.send');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Board + Top Management
-    | Requirement: Board can create attendance sessions
+    | Board + Top Management + HR
+    | Requirement: Board can create attendance sessions. HR can also create sessions for their committees.
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['checkRole:top_management,board'])->group(function () {
+    Route::middleware(['checkRole:top_management,board,hr'])->group(function () {
 
         // Sessions
         Route::resource('sessions', SessionController::class);
         Route::post('/sessions/{session}/toggle', [SessionController::class, 'toggleStatus'])->name('sessions.toggle');
 
-        // Committee viewing + member assignments
+        // Committee View/Show
         Route::get('/committees', [CommitteeController::class, 'index'])->name('committees.index');
         Route::get('/committees/{committee}', [CommitteeController::class, 'show'])->name('committees.show');
         Route::post('/committees/{committee}/assign', [CommitteeController::class, 'assignUser'])->name('committees.assign');
@@ -90,4 +100,3 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
     });
 });
-    

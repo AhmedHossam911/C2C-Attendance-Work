@@ -36,6 +36,8 @@
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('users.pending') }}" class="btn btn-warning">Pending Approvals</a>
                                     <a href="{{ route('users.create') }}" class="btn btn-success">Create User</a>
+                                    <a href="{{ route('qr.index') }}" class="btn btn-info">Send QR Emails</a>
+                                    <a href="{{ route('export_import.index') }}" class="btn btn-secondary">Export/Import</a>
                                 </div>
                             </div>
                         </div>

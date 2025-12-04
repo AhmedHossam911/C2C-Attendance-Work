@@ -10,13 +10,26 @@ class SessionController extends Controller
 {
     public function index()
     {
-        $sessions = AttendanceSession::latest()->get();
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            // HR sees sessions for their committees
+            $committeeIds = $user->committees->pluck('id');
+            $sessions = AttendanceSession::whereIn('committee_id', $committeeIds)->latest()->get();
+        } else {
+            $sessions = AttendanceSession::latest()->get();
+        }
         return view('sessions.index', compact('sessions'));
     }
 
     public function create()
     {
-        return view('sessions.create');
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            $committees = $user->committees;
+        } else {
+            $committees = \App\Models\Committee::all();
+        }
+        return view('sessions.create', compact('committees'));
     }
 
     public function store(Request $request)
@@ -25,7 +38,16 @@ class SessionController extends Controller
             'title' => 'required|string|max:255',
             'late_threshold_minutes' => 'required|integer|min:0',
             'counts_for_attendance' => 'boolean',
+            'committee_id' => 'required|exists:committees,id',
         ]);
+
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            // Verify HR is assigned to this committee
+            if (!$user->committees->contains($validated['committee_id'])) {
+                return back()->withErrors(['committee_id' => 'You are not assigned to this committee.']);
+            }
+        }
 
         $validated['created_by'] = Auth::id();
         $validated['status'] = 'closed'; // Default to closed

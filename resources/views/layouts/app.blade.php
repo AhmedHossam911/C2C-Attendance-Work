@@ -28,7 +28,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                         </li>
-                        @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board'))
+                        @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('committees.index') }}">Committees</a>
                             </li>
@@ -114,7 +114,7 @@
         @yield('content')
     </div>
 
-    
+
 </body>
 
 </html>

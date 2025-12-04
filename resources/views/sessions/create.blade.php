@@ -9,6 +9,14 @@
                     <form method="POST" action="{{ route('sessions.store') }}">
                         @csrf
                         <div class="mb-3">
+                            <label class="form-label">Committee</label>
+                            <select name="committee_id" class="form-select" required>
+                                @foreach ($committees as $committee)
+                                    <option value="{{ $committee->id }}">{{ $committee->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Title</label>
                             <input type="text" name="title" class="form-control"
                                 placeholder="e.g., General Assembly Meeting" required>

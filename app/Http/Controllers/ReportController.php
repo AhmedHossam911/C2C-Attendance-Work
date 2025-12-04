@@ -39,6 +39,11 @@ class ReportController extends Controller
             });
         }
 
+        // Hide Top Management and Board from search results unless the user is Top Management
+        if (!Auth::user()->hasRole('top_management')) {
+            $query->whereNotIn('role', ['top_management', 'board']);
+        }
+
         $members = $query->with('attendanceRecords.session')->get();
 
         return view('reports.member', compact('members'));
