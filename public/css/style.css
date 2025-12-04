@@ -1,0 +1,55 @@
+:root {
+    /* 
+       TODO: Update these color variables to match your 'c2c logo.png' palette.
+       I have set defaults, but you should pick the exact HEX codes from your logo.
+    */
+    --brand-primary: #0d6efd; /* Example: Blue */
+    --brand-secondary: #6c757d; /* Example: Grey */
+    --brand-accent: #ffc107; /* Example: Yellow */
+    --brand-dark: #212529;
+    --brand-light: #f8f9fa;
+}
+
+body {
+    background-color: #f4f6f9;
+}
+
+.navbar-custom {
+    background-color: var(
+        --brand-dark
+    ); /* Or var(--brand-primary) depending on preference */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.btn-primary:hover {
+    background-color: color-mix(in srgb, var(--brand-primary), black 10%);
+    border-color: color-mix(in srgb, var(--brand-primary), black 10%);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+.logo-img {
+    height: 40px; /* Adjust height as needed */
+    width: auto;
+    margin-right: 10px;
+}
