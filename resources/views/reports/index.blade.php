@@ -10,10 +10,11 @@
 
     @foreach ($committees as $committee)
         <div class="card mb-4 mt-3">
-            <div class="card-header bg-success text-white">
-                <h4>{{ $committee->name }}</h4>
+            <div class="card-header bg-success text-white" style="cursor: pointer;" data-bs-toggle="collapse"
+                data-bs-target="#committee-{{ $committee->id }}">
+                <h4 class="mb-0">{{ $committee->name }} <i class="bi bi-chevron-down float-end"></i></h4>
             </div>
-            <div class="card-body">
+            <div id="committee-{{ $committee->id }}" class="collapse card-body">
                 <table class="table table-bordered">
                     <thead>
                         <tr>

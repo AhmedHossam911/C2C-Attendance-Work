@@ -13,7 +13,7 @@ class CommitteeController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('hr')) {
-            $query = $user->committees();
+            $query = $user->authorizedCommittees();
         } else {
             $query = Committee::query();
         }
@@ -25,6 +25,17 @@ class CommitteeController extends Controller
         }
 
         $committees = $query->paginate(9)->withQueryString();
+
+        // Privacy Filter: Hide Top Management, Board, and HR from member counts unless user is Top Management
+        if (!$user->hasRole('top_management')) {
+            $committees->getCollection()->each(function ($committee) {
+                $filteredUsers = $committee->users->filter(function ($member) {
+                    return !in_array($member->role, ['top_management', 'board', 'hr']);
+                });
+                $committee->setRelation('users', $filteredUsers);
+            });
+        }
+
         return view('committees.index', compact('committees'));
     }
 
@@ -47,7 +58,19 @@ class CommitteeController extends Controller
 
     public function show(Request $request, Committee $committee)
     {
-        $query = $committee->users()->where('role', '!=', 'top_management');
+        $user = auth()->user();
+        $query = $committee->users();
+
+        // Privacy Filter: Hide Top Management, Board, and HR unless user is Top Management
+        if (!$user->hasRole('top_management')) {
+            $query->whereNotIn('role', ['top_management', 'board', 'hr']);
+        } else {
+            $query->where('role', '!=', 'top_management'); // Top Mgmt sees everyone except other Top Mgmt (or maybe they should see everyone?)
+            // Original code was: where('role', '!=', 'top_management'). Let's keep it consistent with original intent but maybe Top Mgmt should see everyone?
+            // Actually, usually Top Mgmt can see everyone. But let's stick to the stricter filter for non-Top Mgmt.
+            // For Top Mgmt, let's keep the original filter: hide Top Mgmt from list?
+            // The original code hid Top Management. Let's preserve that.
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -59,9 +82,16 @@ class CommitteeController extends Controller
 
         $members = $query->paginate(10)->withQueryString();
 
-        $users = User::where('status', 'active')
-            ->where('role', '!=', 'top_management')
-            ->get();
+        $usersQuery = User::where('status', 'active');
+
+        // Privacy Filter for Dropdown
+        if (!$user->hasRole('top_management')) {
+            $usersQuery->whereNotIn('role', ['top_management', 'board', 'hr']);
+        } else {
+            $usersQuery->where('role', '!=', 'top_management');
+        }
+
+        $users = $usersQuery->get();
 
         return view('committees.show', compact('committee', 'members', 'users'));
     }

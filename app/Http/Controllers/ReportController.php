@@ -42,29 +42,29 @@ class ReportController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $query = Committee::with(['users.attendanceRecords']);
-
-        // HR Restriction: Only their committees
         if ($user->hasRole('hr')) {
             // Fetch committees assigned to HR
-            $committees = $user->committees()->with(['users.attendanceRecords'])->get();
+            $committees = $user->authorizedCommittees()->with(['users.attendanceRecords'])->get();
 
             if ($committees->isEmpty()) {
                 abort(403, 'You are not assigned to any committees.');
             }
+        } else {
+            // Top Management and Board fetch all
+            $committees = Committee::with(['users.attendanceRecords'])->get();
+        }
 
-            // Manually filter users to ensure privacy (hide Top Management, Board, and HR)
+        // Privacy Filter: Hide Top Management, Board, and HR from everyone except Top Management
+        if (!$user->hasRole('top_management')) {
             $committees->each(function ($committee) {
                 $filteredUsers = $committee->users->filter(function ($member) {
                     return !in_array($member->role, ['top_management', 'board', 'hr']);
                 })->values(); // Reset indices
                 $committee->setRelation('users', $filteredUsers);
             });
-
-            return $committees;
         }
 
-        return $query->get();
+        return $committees;
     }
 
     private function getMembersData(Request $request)
@@ -74,7 +74,7 @@ class ReportController extends Controller
 
         // HR Restriction: Must be assigned to a committee
         if ($user->hasRole('hr')) {
-            $committeeIds = $user->committees->pluck('id');
+            $committeeIds = $user->authorizedCommittees->pluck('id');
 
             if ($committeeIds->isEmpty()) {
                 abort(403, 'You are not assigned to any committees.');
@@ -98,13 +98,26 @@ class ReportController extends Controller
         // Execute query first
         $members = $query->with('attendanceRecords.session')->get();
 
-        // Manual Privacy Filter: Hide Top Management, Board, AND HR from search results unless the user is Top Management or Board
-        if (!$user->hasRole('top_management') && !$user->hasRole('board')) {
+        // Manual Privacy Filter: Hide Top Management, Board, AND HR from search results unless the user is Top Management
+        if (!$user->hasRole('top_management')) {
             $members = $members->filter(function ($member) {
                 return !in_array($member->role, ['top_management', 'board', 'hr']);
             })->values();
         }
 
-        return $members;
+        // Manual Pagination
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+
+        $itemsForCurrentPage = $members->slice($offset, $perPage)->all();
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $itemsForCurrentPage,
+            $members->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
     }
 }

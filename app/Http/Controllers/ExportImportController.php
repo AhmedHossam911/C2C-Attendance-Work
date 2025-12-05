@@ -53,6 +53,14 @@ class ExportImportController extends Controller
         ]);
 
         $committee = Committee::findOrFail($request->committee_id);
+
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            if (!$user->authorizedCommittees->contains($committee->id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $users = $committee->users;
 
         // 1. Generate Excel Data

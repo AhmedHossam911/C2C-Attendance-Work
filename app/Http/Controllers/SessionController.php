@@ -14,8 +14,8 @@ class SessionController extends Controller
         $query = AttendanceSession::with('committee')->withCount('records');
 
         if ($user->hasRole('hr')) {
-            // HR sees sessions for their committees
-            $committeeIds = $user->committees->pluck('id');
+            // HR sees sessions for their authorized committees
+            $committeeIds = $user->authorizedCommittees->pluck('id');
             $query->whereIn('committee_id', $committeeIds);
         }
 
@@ -27,6 +27,14 @@ class SessionController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
         $sessions = $query->latest()->paginate(10)->withQueryString();
         $committees = \App\Models\Committee::all(); // For filter dropdown
 
@@ -35,9 +43,9 @@ class SessionController extends Controller
 
     public function export(AttendanceSession $session)
     {
-        // Check permission: HR can only export their own committee sessions
+        // Check permission: HR can only export their own authorized committee sessions
         $user = Auth::user();
-        if ($user->hasRole('hr') && !$user->committees->contains($session->committee_id)) {
+        if ($user->hasRole('hr') && !$user->authorizedCommittees->contains($session->committee_id)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -48,7 +56,7 @@ class SessionController extends Controller
     {
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-            $committees = $user->committees;
+            $committees = $user->authorizedCommittees;
         } else {
             $committees = \App\Models\Committee::all();
         }
@@ -66,14 +74,14 @@ class SessionController extends Controller
 
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-            // Verify HR is assigned to this committee
-            if (!$user->committees->contains($validated['committee_id'])) {
-                return back()->withErrors(['committee_id' => 'You are not assigned to this committee.']);
+            // Verify HR is authorized for this committee
+            if (!$user->authorizedCommittees->contains($validated['committee_id'])) {
+                return back()->withErrors(['committee_id' => 'You are not authorized for this committee.']);
             }
         }
 
         $validated['created_by'] = Auth::id();
-        $validated['status'] = 'closed'; // Default to closed
+        $validated['status'] = 'open'; // Default to closed
 
         AttendanceSession::create($validated);
 

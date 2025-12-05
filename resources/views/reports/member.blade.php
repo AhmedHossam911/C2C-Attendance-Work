@@ -22,8 +22,12 @@
     @if (isset($members))
         @foreach ($members as $member)
             <div class="card mb-3">
-                <div class="card-header">{{ $member->name }} ({{ $member->email }}) - Role: {{ $member->role }}</div>
-                <div class="card-body">
+                <div class="card-header" style="cursor: pointer;" data-bs-toggle="collapse"
+                    data-bs-target="#member-{{ $member->id }}">
+                    {{ $member->name }} ({{ $member->email }}) - Role: {{ $member->role }}
+                    <i class="bi bi-chevron-down float-end"></i>
+                </div>
+                <div id="member-{{ $member->id }}" class="collapse card-body">
                     <h5>Attendance History</h5>
                     <table class="table table-sm">
                         <thead>
@@ -50,5 +54,9 @@
                 </div>
             </div>
         @endforeach
+
+        <div class="mt-3">
+            {{ $members->links() }}
+        </div>
     @endif
 @endsection

@@ -17,10 +17,13 @@ Route::get('/', function () {
 | Auth Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
@@ -57,6 +60,16 @@ Route::middleware(['auth'])->group(function () {
         // Send QR Emails
         Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');
         Route::get('/qr-image/{id}', [App\Http\Controllers\QrEmailController::class, 'showImage'])->name('qr.image');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Top Management + Board
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['checkRole:top_management,board'])->group(function () {
+        // Authorizations
+        Route::resource('authorizations', \App\Http\Controllers\AuthorizedCommitteeController::class)->only(['index', 'store', 'destroy']);
     });
 
     /*

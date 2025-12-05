@@ -41,6 +41,10 @@
             const html5QrCode = new Html5Qrcode("reader");
             let isScanning = true;
 
+            // Audio Feedback
+            const successAudio = new Audio("{{ asset('sounds/success.mp3') }}");
+            const errorAudio = new Audio("{{ asset('sounds/error.mp3') }}");
+
             const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                 if (!isScanning) return;
 
@@ -77,6 +81,9 @@
                         const placeholder = document.getElementById('noScansPlaceholder');
 
                         if (result.status === 200) {
+                            // Play Success Sound
+                            successAudio.play().catch(e => console.log('Audio play failed:', e));
+
                             resultDiv.innerHTML = `<div class="alert alert-success">
                     <strong>Success!</strong> ${result.body.user} marked as ${result.body.status}.
                 </div>`;
@@ -92,6 +99,9 @@
                             recentList.prepend(li);
 
                         } else {
+                            // Play Error Sound
+                            errorAudio.play().catch(e => console.log('Audio play failed:', e));
+
                             resultDiv.innerHTML = `<div class="alert alert-danger">
                     <strong>Error:</strong> ${result.body.message}
                 </div>`;
@@ -106,6 +116,9 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        // Play Error Sound
+                        errorAudio.play().catch(e => console.log('Audio play failed:', e));
+
                         document.getElementById('result').innerHTML =
                             `<div class="alert alert-danger">System Error</div>`;
                         setTimeout(() => {

@@ -67,4 +67,11 @@ class User extends Authenticatable
     {
         return $this->status === 'active';
     }
+
+    public function authorizedCommittees()
+    {
+        return $this->belongsToMany(Committee::class, 'committee_authorizations', 'user_id', 'committee_id')
+            ->withPivot('granted_by')
+            ->withTimestamps();
+    }
 }

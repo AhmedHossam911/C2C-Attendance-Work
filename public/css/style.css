@@ -3,8 +3,8 @@
        TODO: Update these color variables to match your 'c2c logo.png' palette.
        I have set defaults, but you should pick the exact HEX codes from your logo.
     */
-    --brand-primary: #0d6efd; /* Example: Blue */
-    --brand-secondary: #6c757d; /* Example: Grey */
+    --brand-primary: rgb(30, 59, 138); /* Updated Blue */
+    --brand-secondary: #ffffff; /* Example: Grey */
     --brand-accent: #ffc107; /* Example: Yellow */
     --brand-dark: #212529;
     --brand-light: #f8f9fa;
@@ -52,4 +52,15 @@ body {
     height: 40px; /* Adjust height as needed */
     width: auto;
     margin-right: 10px;
+}
+
+/* Footer Social Links Animation */
+.footer-social-link {
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-social-link:hover {
+    transform: translateY(-3px) scale(1.1);
+    color: var(--brand-primary) !important; /* Use brand primary color on hover */
 }

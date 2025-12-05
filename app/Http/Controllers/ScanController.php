@@ -15,7 +15,7 @@ class ScanController extends Controller
     {
         $user = Auth::user();
         if ($user->hasRole('hr')) {
-            $committeeIds = $user->committees->pluck('id');
+            $committeeIds = $user->authorizedCommittees->pluck('id');
             $activeSessions = AttendanceSession::where('status', 'open')
                 ->whereIn('committee_id', $committeeIds)
                 ->get();
@@ -29,6 +29,13 @@ class ScanController extends Controller
     {
         if ($session->status !== 'open') {
             return response()->json(['message' => 'Session is closed.'], 400);
+        }
+
+        $user = Auth::user();
+        if ($user->hasRole('hr')) {
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                return response()->json(['message' => 'Unauthorized session.'], 403);
+            }
         }
 
         $request->validate([
