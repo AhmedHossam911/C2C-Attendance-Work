@@ -3,7 +3,7 @@
        TODO: Update these color variables to match your 'c2c logo.png' palette.
        I have set defaults, but you should pick the exact HEX codes from your logo.
     */
-    --brand-primary: rgb(30, 59, 138); /* Updated Blue */
+    --brand-primary: #1e3b8a; /* Updated Blue */
     --brand-secondary: #ffffff; /* Example: Grey */
     --brand-accent: #ffc107; /* Example: Yellow */
     --brand-dark: #212529;

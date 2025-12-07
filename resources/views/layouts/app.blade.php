@@ -135,13 +135,18 @@
 
     <footer style="background-color: #14b8a6;" class="text-center text-lg-start mt-auto py-3">
         <div class="container text-center">
-            <span class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</span>
+            <p class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</p>
+            <p class="text-white"> Developed by <a href="https://linktr.ee/Ahmed_911" target="_blank"
+                    style="color: #1e3b8a; font-weight: bold; text-decoration: none;">Ahmed Hossam</a> C2C
+                President💙.
+            </p>
         </div>
         <div class="container text-center mt-2">
             <a target="_blank" href="https://www.facebook.com/C2C.BIS.Helwan"
-                class="text-white me-3 text-decoration-none footer-social-link"><i class="bi bi-facebook fs-5"></i></a>
-            <a target="_blank" href="https://www.tiktok.com/@c2c.bis.helwan" class="text-white me-3 text-decoration-none footer-social-link"><i
-                    class="bi bi-tiktok fs-5"></i></a>
+                class="text-white me-3 text-decoration-none footer-social-link"><i
+                    class="bi bi-facebook fs-5"></i></a>
+            <a target="_blank" href="https://www.tiktok.com/@c2c.bis.helwan"
+                class="text-white me-3 text-decoration-none footer-social-link"><i class="bi bi-tiktok fs-5"></i></a>
             <a target="_blank" href="https://www.instagram.com/c2c.bis.helwan/"
                 class="text-white me-3 text-decoration-none footer-social-link"><i
                     class="bi bi-instagram fs-5"></i></a>

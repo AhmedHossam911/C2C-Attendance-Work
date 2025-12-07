@@ -12,6 +12,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Public Route for Viewing QR (Signed)
+Route::get('/my-qr/{user}', [App\Http\Controllers\QrEmailController::class, 'viewQr'])->name('qr.view')->middleware('signed');
+
 /*
 |--------------------------------------------------------------------------
 | Auth Routes

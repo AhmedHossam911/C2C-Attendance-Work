@@ -16,28 +16,10 @@ class DatabaseSeeder extends Seeder
     {
         // Create Top Management User
         User::create([
-            'name' => 'Top Manager',
-            'email' => 'admin@c2c.com',
-            'password' => Hash::make('password'),
+            'name' => 'Ahmed Hossam',
+            'email' => 'Ahmed.President@c2c.com',
+            'password' => Hash::make('Medo@511@'),
             'role' => 'top_management',
-            'status' => 'active',
-        ]);
-
-        // Create Board Member
-        User::create([
-            'name' => 'Board Member',
-            'email' => 'board@c2c.com',
-            'password' => Hash::make('password'),
-            'role' => 'board',
-            'status' => 'active',
-        ]);
-
-        // Create HR
-        User::create([
-            'name' => 'HR Manager',
-            'email' => 'hr@c2c.com',
-            'password' => Hash::make('password'),
-            'role' => 'hr',
             'status' => 'active',
         ]);
     }

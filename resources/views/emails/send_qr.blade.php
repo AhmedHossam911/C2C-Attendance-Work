@@ -57,14 +57,14 @@
                         <tbody>
                             @forelse($users as $user)
                                 @php
-                                    $qrUrl = route('qr.image', $user->id);
+                                    $qrUrl = URL::signedRoute('qr.view', ['user' => $user->id]);
                                     $subject = 'Membership QR - ' . ($user->committees->first()->name ?? 'General');
                                     $body =
                                         'Hello ' .
                                         $user->name .
                                         ",\n\nHere is your membership QR code link:\n" .
                                         $qrUrl .
-                                        "\n\nPlease keep it safe.\n\nBest regards,";
+                                        "\n\nPlease click the link to view your QR code page.\n\nPlease keep it safe.\n\nBest regards,";
                                     $gmailUrl =
                                         'https://mail.google.com/mail/?view=cm&fs=1&to=' .
                                         $user->email .
@@ -108,14 +108,14 @@
                 <h5 class="mb-3">Members List ({{ $users->total() }})</h5>
                 @forelse($users as $user)
                     @php
-                        $qrUrl = route('qr.image', $user->id);
+                        $qrUrl = URL::signedRoute('qr.view', ['user' => $user->id]);
                         $subject = 'Membership QR - ' . ($user->committees->first()->name ?? 'General');
                         $body =
                             'Hello ' .
                             $user->name .
                             ",\n\nHere is your membership QR code link:\n" .
                             $qrUrl .
-                            "\n\nPlease keep it safe.\n\nBest regards,";
+                            "\n\nPlease click the link to view your QR code page.\n\nPlease keep it safe.\n\nBest regards,";
                         $gmailUrl =
                             'https://mail.google.com/mail/?view=cm&fs=1&to=' .
                             $user->email .

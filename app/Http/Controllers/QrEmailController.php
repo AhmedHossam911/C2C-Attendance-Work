@@ -59,4 +59,26 @@ class QrEmailController extends Controller
 
         return response($qrImage)->header('Content-Type', 'image/png');
     }
+
+    public function viewQr(Request $request, User $user)
+    {
+        // Check for valid signature if we want to protect it, but for now let's keep it simple or use signed route
+        if (!$request->hasValidSignature()) {
+            abort(403, 'Invalid or expired link.');
+        }
+
+        // Generate QR as SVG
+        $qrCode = QrCode::format('svg')
+            ->size(300)
+            ->margin(1)
+            ->generate($user->id);
+
+        $data = [
+            'member_name' => $user->name,
+            'committee_name' => $user->committees->first()->name ?? 'General',
+            'session_name' => null
+        ];
+
+        return view('emails.qr_code', compact('data', 'qrCode'));
+    }
 }

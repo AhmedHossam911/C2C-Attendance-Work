@@ -15,12 +15,12 @@ class SendQrEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
-    public $qrImage;
+    public $qrCode; // Renamed from qrImage to qrCode for clarity (it's an SVG string now)
 
-    public function __construct($data, $qrImage)
+    public function __construct($data, $qrCode)
     {
         $this->data = $data;
-        $this->qrImage = $qrImage;
+        $this->qrCode = $qrCode;
     }
 
     public function envelope(): Envelope
@@ -39,14 +39,15 @@ class SendQrEmail extends Mailable
     {
         return new Content(
             view: 'emails.qr_code',
+            with: [
+                'data' => $this->data,
+                'qrCode' => $this->qrCode,
+            ],
         );
     }
 
     public function attachments(): array
     {
-        return [
-            Attachment::fromData(fn() => $this->qrImage, 'qr_code.png')
-                ->withMime('image/png'),
-        ];
+        return [];
     }
 }
