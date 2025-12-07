@@ -25,6 +25,8 @@ class ExportImportController extends Controller
 
     public function importUsers(Request $request)
     {
+        set_time_limit(300); // Increase timeout to 5 minutes
+
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
@@ -38,7 +40,7 @@ class ExportImportController extends Controller
     {
         // Simple CSV template
         $headers = ['Content-Type' => 'text/csv'];
-        $columns = ['name', 'email', 'password', 'role', 'status', 'committees'];
+        $columns = ['name', 'email', 'password', 'role', 'status', 'committees', 'authorized_committees'];
 
         $callback = function () use ($columns) {
             $file = fopen('php://output', 'w');

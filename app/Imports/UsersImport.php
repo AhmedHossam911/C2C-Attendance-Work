@@ -30,6 +30,21 @@ class UsersImport implements ToModel, WithHeadingRow
             }
         }
 
+        // Handle Authorized Committees (for HR)
+        if ($user->role === 'hr' && isset($row['authorized_committees'])) {
+            $authCommitteeNames = explode(',', $row['authorized_committees']);
+            foreach ($authCommitteeNames as $name) {
+                $name = trim($name);
+                if ($name) {
+                    $committee = \App\Models\Committee::firstOrCreate(['name' => $name]);
+                    // Attach to authorizedCommittees with granted_by
+                    $user->authorizedCommittees()->attach($committee->id, [
+                        'granted_by' => \Illuminate\Support\Facades\Auth::id() ?? 1 // Default to 1 if no auth user (e.g. seeder/console)
+                    ]);
+                }
+            }
+        }
+
         return $user;
     }
 }
