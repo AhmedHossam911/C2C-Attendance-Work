@@ -97,5 +97,13 @@ body {
 
 /* Theme Toggle Button Styling */
 .theme-icon-active {
-    display: none;
+    /* Class used for JS selection */
+}
+
+/* Force QR Code container to be white in both modes for scanning contrast */
+.visible-print, .qr-code-container {
+    background-color: white !important;
+    padding: 20px;
+    border-radius: 8px;
+    display: inline-block;
 }

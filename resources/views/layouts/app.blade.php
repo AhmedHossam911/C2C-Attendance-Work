@@ -30,6 +30,9 @@
                 <img src="{{ asset('c2c logo.png') }}" alt="C2C Logo" class="logo-img">
                 <span>C2C Attendance</span>
             </a>
+            <button class="btn nav-link theme-toggle-btn ms-auto me-2" title="Toggle theme">
+                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
+            </button>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -84,12 +87,7 @@
                             </li>
                         @endif
                     </ul>
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item me-2">
-                            <button class="btn nav-link theme-toggle-btn" title="Toggle theme">
-                                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
-                            </button>
-                        </li>
+                    <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->name }} ({{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }})
