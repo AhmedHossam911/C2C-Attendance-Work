@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
 
 class ExportImportController extends Controller
 {
@@ -171,8 +172,26 @@ class ExportImportController extends Controller
             }
 
             $zip->close();
+
+            // Cleanup: Delete the temporary directory and all its contents
+            File::deleteDirectory($tempDir);
         }
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    public function cleanupTempFiles()
+    {
+        // Define the pattern for temp directories
+        $tempPattern = storage_path('app/temp_qrs_*');
+        $dirs = glob($tempPattern, GLOB_ONLYDIR);
+        $count = 0;
+
+        foreach ($dirs as $dir) {
+            File::deleteDirectory($dir);
+            $count++;
+        }
+
+        return "Cleanup complete. Deleted {$count} temporary directories.";
     }
 }

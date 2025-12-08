@@ -1,23 +1,46 @@
 :root {
-    /* 
-       TODO: Update these color variables to match your 'c2c logo.png' palette.
-       I have set defaults, but you should pick the exact HEX codes from your logo.
-    */
-    --brand-primary: #1e3b8a; /* Updated Blue */
-    --brand-secondary: #ffffff; /* Example: Grey */
-    --brand-accent: #ffc107; /* Example: Yellow */
-    --brand-dark: #212529;
-    --brand-light: #f8f9fa;
+    /* Brand Colors */
+    --brand-primary: #1e3b8a;
+    --brand-secondary: #ffffff;
+    --brand-accent: #ffc107;
+
+    /* Light Mode Defaults */
+    --brand-bg-color: #f4f6f9;
+    --brand-card-bg: #ffffff;
+    --brand-text-color: #212529;
+    --brand-navbar-bg: #14b8a6; /* Teal default */
+    --brand-footer-bg: #14b8a6;
+    --brand-border-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] {
+    /* Dark Mode Overrides */
+    --brand-bg-color: #212529;
+    --brand-card-bg: #2b3035;
+    --brand-text-color: #f8f9fa;
+    --brand-navbar-bg: #0f766e; /* Darker teal */
+    --brand-footer-bg: #0f766e;
+    --brand-border-color: rgba(255, 255, 255, 0.1);
+
+    /* Bootstrap var overrides where needed */
+    --bs-body-bg: var(--brand-bg-color);
+    --bs-body-color: var(--brand-text-color);
 }
 
 body {
-    background-color: #f4f6f9;
+    background-color: var(--brand-bg-color);
+    color: var(--brand-text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Utility for brand background (Navbar/Footer) */
+.bg-brand {
+    background-color: var(--brand-navbar-bg) !important;
+    transition: background-color 0.3s ease;
 }
 
 .navbar-custom {
-    background-color: var(
-        --brand-dark
-    ); /* Or var(--brand-primary) depending on preference */
+    background-color: var(--brand-navbar-bg);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -26,6 +49,7 @@ body {
     font-weight: bold;
 }
 
+/* Buttons */
 .btn-primary {
     background-color: var(--brand-primary);
     border-color: var(--brand-primary);
@@ -36,20 +60,26 @@ body {
     border-color: color-mix(in srgb, var(--brand-primary), black 10%);
 }
 
+/* Cards */
 .card {
     border: none;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     margin-bottom: 1.5rem;
+    background-color: var(--brand-card-bg);
 }
 
 .card-header {
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.03); /* Translucent so it works on both */
+    border-bottom: 1px solid var(--brand-border-color);
     font-weight: 600;
 }
 
+[data-bs-theme="dark"] .card-header {
+    background-color: rgba(255, 255, 255, 0.05); /* Lighter on dark */
+}
+
 .logo-img {
-    height: 40px; /* Adjust height as needed */
+    height: 40px;
     width: auto;
     margin-right: 10px;
 }
@@ -62,5 +92,10 @@ body {
 
 .footer-social-link:hover {
     transform: translateY(-3px) scale(1.1);
-    color: var(--brand-primary) !important; /* Use brand primary color on hover */
+    color: var(--brand-primary) !important;
+}
+
+/* Theme Toggle Button Styling */
+.theme-icon-active {
+    display: none;
 }

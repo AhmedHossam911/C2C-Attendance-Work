@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/import-users', [App\Http\Controllers\ExportImportController::class, 'importUsers'])->name('import.users');
         Route::get('/import-template', [App\Http\Controllers\ExportImportController::class, 'downloadTemplate'])->name('import.template');
         Route::post('/export-qr', [App\Http\Controllers\ExportImportController::class, 'exportQrData'])->name('export.qr');
+        Route::get('/cleanup-temp-files', [App\Http\Controllers\ExportImportController::class, 'cleanupTempFiles'])->name('cleanup.temp.files');
 
         // Send QR Emails
         Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');

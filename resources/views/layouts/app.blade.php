@@ -24,7 +24,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <nav style="background-color: #14b8a6;" class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-brand navbar-custom">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
                 <img src="{{ asset('c2c logo.png') }}" alt="C2C Logo" class="logo-img">
@@ -84,7 +84,12 @@
                             </li>
                         @endif
                     </ul>
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item me-2">
+                            <button class="btn nav-link theme-toggle-btn" title="Toggle theme">
+                                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
+                            </button>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->name }} ({{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }})
@@ -100,7 +105,12 @@
                         </li>
                     </ul>
                 @else
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item me-2">
+                            <button class="btn nav-link theme-toggle-btn" title="Toggle theme">
+                                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
+                            </button>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">Login</a>
                         </li>
@@ -133,7 +143,7 @@
         @yield('content')
     </div>
 
-    <footer style="background-color: #14b8a6;" class="text-center text-lg-start mt-auto py-3">
+    <footer class="text-center text-lg-start mt-auto py-3 bg-brand">
         <div class="container text-center">
             <p class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</p>
             <p class="text-white"> Developed by <a href="https://linktr.ee/Ahmed_911" target="_blank"
@@ -154,6 +164,42 @@
                 class="text-white text-decoration-none footer-social-link"><i class="bi bi-linkedin fs-5"></i></a>
         </div>
     </footer>
+    <script>
+        // Theme Toggle Logic
+        const htmlElement = document.documentElement;
+
+        function updateIcons(theme) {
+            const icons = document.querySelectorAll('.theme-icon-active');
+            icons.forEach(icon => {
+                if (theme === 'dark') {
+                    icon.classList.remove('bi-moon-stars-fill');
+                    icon.classList.add('bi-sun-fill');
+                } else {
+                    icon.classList.remove('bi-sun-fill');
+                    icon.classList.add('bi-moon-stars-fill');
+                }
+            });
+        }
+
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateIcons(theme);
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const initialTheme = savedTheme || systemTheme;
+        setTheme(initialTheme);
+
+        document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            });
+        });
+    </script>
 </body>
 
 </html>

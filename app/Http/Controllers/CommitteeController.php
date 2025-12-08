@@ -28,9 +28,13 @@ class CommitteeController extends Controller
 
         // Privacy Filter: Hide Top Management, Board, and HR from member counts unless user is Top Management
         if (!$user->hasRole('top_management')) {
-            $committees->getCollection()->each(function ($committee) {
-                $filteredUsers = $committee->users->filter(function ($member) {
-                    return !in_array($member->role, ['top_management', 'board', 'hr']);
+            $committees->getCollection()->each(function ($committee) use ($user) {
+                $filteredUsers = $committee->users->filter(function ($member) use ($user) {
+                    $hiddenRoles = ['top_management', 'board', 'hr'];
+                    if ($user->hasRole('board')) {
+                        $hiddenRoles = ['top_management', 'board'];
+                    }
+                    return !in_array($member->role, $hiddenRoles);
                 });
                 $committee->setRelation('users', $filteredUsers);
             });
@@ -63,7 +67,11 @@ class CommitteeController extends Controller
 
         // Privacy Filter: Hide Top Management, Board, and HR unless user is Top Management
         if (!$user->hasRole('top_management')) {
-            $query->whereNotIn('role', ['top_management', 'board', 'hr']);
+            $hiddenRoles = ['top_management', 'board', 'hr'];
+            if ($user->hasRole('board')) {
+                $hiddenRoles = ['top_management', 'board'];
+            }
+            $query->whereNotIn('role', $hiddenRoles);
         } else {
             $query->where('role', '!=', 'top_management'); // Top Mgmt sees everyone except other Top Mgmt (or maybe they should see everyone?)
             // Original code was: where('role', '!=', 'top_management'). Let's keep it consistent with original intent but maybe Top Mgmt should see everyone?
@@ -86,7 +94,11 @@ class CommitteeController extends Controller
 
         // Privacy Filter for Dropdown
         if (!$user->hasRole('top_management')) {
-            $usersQuery->whereNotIn('role', ['top_management', 'board', 'hr']);
+            $hiddenRoles = ['top_management', 'board', 'hr'];
+            if ($user->hasRole('board')) {
+                $hiddenRoles = ['top_management', 'board'];
+            }
+            $usersQuery->whereNotIn('role', $hiddenRoles);
         } else {
             $usersQuery->where('role', '!=', 'top_management');
         }

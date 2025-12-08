@@ -56,9 +56,13 @@ class ReportController extends Controller
 
         // Privacy Filter: Hide Top Management, Board, and HR from everyone except Top Management
         if (!$user->hasRole('top_management')) {
-            $committees->each(function ($committee) {
-                $filteredUsers = $committee->users->filter(function ($member) {
-                    return !in_array($member->role, ['top_management', 'board', 'hr']);
+            $committees->each(function ($committee) use ($user) {
+                $filteredUsers = $committee->users->filter(function ($member) use ($user) {
+                    $hiddenRoles = ['top_management', 'board', 'hr'];
+                    if ($user->hasRole('board')) {
+                        $hiddenRoles = ['top_management', 'board']; // Board encounters HR
+                    }
+                    return !in_array($member->role, $hiddenRoles);
                 })->values(); // Reset indices
                 $committee->setRelation('users', $filteredUsers);
             });
@@ -100,8 +104,12 @@ class ReportController extends Controller
 
         // Manual Privacy Filter: Hide Top Management, Board, AND HR from search results unless the user is Top Management
         if (!$user->hasRole('top_management')) {
-            $members = $members->filter(function ($member) {
-                return !in_array($member->role, ['top_management', 'board', 'hr']);
+            $members = $members->filter(function ($member) use ($user) {
+                $hiddenRoles = ['top_management', 'board', 'hr'];
+                if ($user->hasRole('board')) {
+                    $hiddenRoles = ['top_management', 'board'];
+                }
+                return !in_array($member->role, $hiddenRoles);
             })->values();
         }
 
