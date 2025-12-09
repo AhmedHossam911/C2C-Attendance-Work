@@ -80,6 +80,15 @@ class SessionController extends Controller
             }
         }
 
+        // Check if there is already an open session for this committee
+        $existingSession = AttendanceSession::where('committee_id', $validated['committee_id'])
+            ->where('status', 'open')
+            ->exists();
+
+        if ($existingSession) {
+            return back()->withErrors(['committee_id' => 'There is already an open session for this committee. Please close it first.']);
+        }
+
         $validated['created_by'] = Auth::id();
         $validated['status'] = 'open'; // Default to closed
 

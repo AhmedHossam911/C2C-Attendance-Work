@@ -23,3 +23,18 @@
         </div>
     </div>
 @endsection
+
+@section('scripts')
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = this.querySelector('button[type="submit"]');
+            if (btn.disabled) {
+                e.preventDefault();
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML =
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
+        });
+    </script>
+@endsection

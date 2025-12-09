@@ -104,17 +104,14 @@
                     </ul>
                 @else
                     <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item me-2">
-                            <button class="btn nav-link theme-toggle-btn" title="Toggle theme">
-                                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
-                            </button>
-                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">Login</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Register</a>
-                        </li>
+                        <!--
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">Register</a>
+                            </li>
+                            -->
                     </ul>
                 @endauth
             </div>
@@ -143,11 +140,11 @@
 
     <footer class="text-center text-lg-start mt-auto py-3 bg-brand">
         <div class="container text-center">
-            <p class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</p>
             <p class="text-white"> Developed by <a href="https://linktr.ee/Ahmed_911" target="_blank"
                     style="color: #1e3b8a; font-weight: bold; text-decoration: none;">Ahmed Hossam</a> C2C
                 President💙.
             </p>
+            <p class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</p>
         </div>
         <div class="container text-center mt-2">
             <a target="_blank" href="https://www.facebook.com/C2C.BIS.Helwan"
@@ -198,6 +195,7 @@
             });
         });
     </script>
+    @yield('scripts')
 </body>
 
 </html>
