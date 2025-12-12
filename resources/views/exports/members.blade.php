@@ -20,7 +20,7 @@
                 <td>{{ $member->email }}</td>
                 <td>{{ $member->role }}</td>
                 <td>{{ $member->attendanceRecords->count() }}</td>
-                <td>{{ $lastScan ? $lastScan->created_at->format('Y-m-d H:i') : 'N/A' }}</td>
+                <td>{{ $lastScan ? $lastScan->created_at->format('Y-m-d h:i A') : 'N/A' }}</td>
             </tr>
         @endforeach
     </tbody>

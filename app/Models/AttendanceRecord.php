@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AttendanceRecord extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'attendance_session_id',
@@ -15,6 +16,8 @@ class AttendanceRecord extends Model
         'scanned_by',
         'scanned_at',
         'status',
+        'notes',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -34,5 +37,10 @@ class AttendanceRecord extends Model
     public function scanner()
     {
         return $this->belongsTo(User::class, 'scanned_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

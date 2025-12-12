@@ -79,7 +79,7 @@
                                 <td>{{ $session->late_threshold_minutes }} mins</td>
                                 <td>{{ $session->records_count }}</td>
                                 <td>{{ $session->creator->name }}</td>
-                                <td>{{ $session->created_at->format('Y-m-d H:i') }}</td>
+                                <td>{{ $session->created_at->format('Y-m-d h:i A') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('sessions.show', $session) }}"
@@ -118,7 +118,8 @@
                                 </span>
                             </div>
                             <p class="card-text small text-muted mb-2">
-                                {{ $session->created_at->format('Y-m-d H:i') }} | Created by {{ $session->creator->name }}
+                                {{ $session->created_at->format('Y-m-d h:i A') }} | Created by
+                                {{ $session->creator->name }}
                             </p>
                             <div class="mb-2">
                                 <span class="badge bg-secondary">{{ $session->committee->name ?? 'General' }}</span>

@@ -97,10 +97,23 @@ class SessionController extends Controller
         return redirect()->route('sessions.index')->with('success', 'Session created successfully.');
     }
 
-    public function show(AttendanceSession $session)
+    public function show(AttendanceSession $session, Request $request) // Typehint Request
     {
-        $session->load('records.user');
-        return view('sessions.show', compact('session'));
+        $query = $session->records()
+            ->with(['user', 'scanner', 'updater'])
+            ->orderBy('scanned_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $records = $query->paginate(20)->withQueryString();
+
+        return view('sessions.show', compact('session', 'records'));
     }
 
     public function toggleStatus(AttendanceSession $session)

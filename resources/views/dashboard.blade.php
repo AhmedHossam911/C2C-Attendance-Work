@@ -111,7 +111,7 @@
                                                 <div>
                                                     <strong>{{ $session->title }}</strong><br>
                                                     <small
-                                                        class="text-muted">{{ $session->created_at->format('M d, Y') }}</small>
+                                                        class="text-muted">{{ $session->created_at->format('M d, Y h:i A') }}</small>
                                                 </div>
                                                 <small
                                                     class="text-muted">{{ $session->committee->name ?? 'General' }}</small>

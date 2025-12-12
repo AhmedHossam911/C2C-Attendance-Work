@@ -41,7 +41,7 @@
                             @foreach ($member->attendanceRecords as $record)
                                 <tr>
                                     <td>{{ $record->session->title }}</td>
-                                    <td>{{ $record->scanned_at->format('Y-m-d H:i') }}</td>
+                                    <td>{{ $record->scanned_at->format('Y-m-d h:i A') }}</td>
                                     <td>
                                         <span class="badge bg-{{ $record->status === 'present' ? 'success' : 'warning' }}">
                                             {{ ucfirst($record->status) }}

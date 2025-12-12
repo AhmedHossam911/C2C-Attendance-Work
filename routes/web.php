@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
     | Top Management Only
     |--------------------------------------------------------------------------
     */
+
     Route::middleware(['checkRole:top_management'])->group(function () {
 
         // User Management
@@ -66,6 +67,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/qr-image/{id}', [App\Http\Controllers\QrEmailController::class, 'showImage'])->name('qr.image');
     });
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Top Management + Board
@@ -85,9 +88,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['checkRole:top_management,board,hr'])->group(function () {
 
         // Sessions
-        Route::resource('sessions', SessionController::class);
+        Route::resource('sessions', SessionController::class)->except(['edit', 'update', 'destroy']);
         Route::post('/sessions/{session}/toggle', [SessionController::class, 'toggleStatus'])->name('sessions.toggle');
         Route::get('/sessions/{session}/export', [SessionController::class, 'export'])->name('sessions.export');
+
+        // Attendance Management (Edit/Delete - Controller handles specific permission checks)
+        Route::resource('attendance', \App\Http\Controllers\AttendanceController::class)->only(['update', 'destroy']);
 
         // Committee View/Show
         Route::get('/committees', [CommitteeController::class, 'index'])->name('committees.index');

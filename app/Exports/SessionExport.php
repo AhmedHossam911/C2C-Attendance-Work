@@ -19,7 +19,7 @@ class SessionExport implements FromView
     {
         return view('exports.session', [
             'session' => $this->session,
-            'records' => $this->session->records()->with('user')->get()
+            'records' => $this->session->records()->with(['user', 'scanner', 'updater'])->get()
         ]);
     }
 }
