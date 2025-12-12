@@ -23,7 +23,7 @@ class PreventBackToBackRequests
         }
 
         $user = Auth::id() ?? $request->ip();
-        $key = 'lock:' . md5($user . $request->method() . $request->fullUrl() . serialize($request->all()));
+        $key = 'lock:' . md5($user . $request->method() . $request->fullUrl() . serialize($request->input()));
 
         $lock = Cache::lock($key, 5); // Lock for 5 seconds max
 
