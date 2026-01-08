@@ -1,39 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-header">QR Scanner</div>
-                <div class="card-body">
-                    @if ($activeSessions->isEmpty())
-                        <div class="alert alert-warning">No active sessions found. Please open a session first.</div>
-                    @else
-                        <div class="mb-3">
-                            <label class="form-label">Select Session</label>
-                            <select id="sessionSelect" class="form-select">
-                                @foreach ($activeSessions as $session)
-                                    <option value="{{ $session->id }}">{{ $session->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+    <div class="max-w-3xl mx-auto space-y-6">
+        <!-- Scanner Card -->
+        <x-card>
+            <x-slot name="header">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">QR Scanner</h3>
+            </x-slot>
 
-                        <div id="reader" width="600px"></div>
-
-                        <div id="result" class="mt-3"></div>
-                    @endif
+            @if ($activeSessions->isEmpty())
+                <div
+                    class="p-4 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800/30 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>No active sessions found. Please open a session first.</span>
                 </div>
-            </div>
+            @else
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select Session</label>
+                    <select id="sessionSelect"
+                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white text-sm">
+                        @foreach ($activeSessions as $session)
+                            <option value="{{ $session->id }}">{{ $session->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
-            <!-- Recent Scans List -->
-            <div class="card">
-                <div class="card-header">Recent Scans (This Session)</div>
-                <ul class="list-group list-group-flush" id="recentScansList">
-                    <!-- Scans will be appended here -->
-                    <li class="list-group-item text-muted text-center" id="noScansPlaceholder">No scans yet.</li>
-                </ul>
-            </div>
-        </div>
+                <div class="rounded-2xl overflow-hidden border-2 border-slate-100 dark:border-slate-700 relative bg-black">
+                    <div id="reader" style="width: 100%;"></div>
+                </div>
+
+                <div id="result" class="mt-4 empty:hidden"></div>
+            @endif
+        </x-card>
+
+        <!-- Recent Scans List -->
+        <x-card class="p-0" :embedded="true">
+            <x-slot name="header">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Recent Scans (This Session)</h3>
+            </x-slot>
+
+            <ul class="divide-y divide-slate-100 dark:divide-slate-800" id="recentScansList">
+                <li class="px-6 py-8 text-center text-slate-500 dark:text-slate-400 italic" id="noScansPlaceholder">
+                    No scans yet using this device.
+                </li>
+            </ul>
+        </x-card>
     </div>
 
     @if (!$activeSessions->isEmpty())
@@ -84,17 +99,32 @@
                             // Play Success Sound
                             successAudio.play().catch(e => console.log('Audio play failed:', e));
 
-                            resultDiv.innerHTML = `<div class="alert alert-success">
-                    <strong>Success!</strong> ${result.body.user} marked as ${result.body.status}.
-                </div>`;
+                            // Success Alert (Tailwind)
+                            resultDiv.innerHTML = `<div class="p-4 rounded-xl bg-green-50 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800/30 flex items-center gap-3 animate-fade-in-down">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                <div>
+                                    <strong class="font-bold">Success!</strong> 
+                                    <span>${result.body.user} marked as ${result.body.status}.</span>
+                                </div>
+                            </div>`;
 
                             // Add to recent list
                             if (placeholder) placeholder.remove();
                             const li = document.createElement('li');
-                            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                            li.className =
+                                'px-6 py-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors animate-fade-in';
+
+                            const statusColor = result.body.status === 'present' ?
+                                'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+
                             li.innerHTML = `
-                                <span>${result.body.user}</span>
-                                <span class="badge bg-${result.body.status === 'present' ? 'success' : 'warning'}">${result.body.status}</span>
+                                <span class="font-medium text-slate-700 dark:text-slate-200">${result.body.user}</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusColor}">
+                                    ${result.body.status.charAt(0).toUpperCase() + result.body.status.slice(1)}
+                                </span>
                             `;
                             recentList.prepend(li);
 
@@ -102,9 +132,16 @@
                             // Play Error Sound
                             errorAudio.play().catch(e => console.log('Audio play failed:', e));
 
-                            resultDiv.innerHTML = `<div class="alert alert-danger">
-                    <strong>Error:</strong> ${result.body.message}
-                </div>`;
+                            // Error Alert (Tailwind)
+                            resultDiv.innerHTML = `<div class="p-4 rounded-xl bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800/30 flex items-center gap-3 animate-fade-in-down">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                <div>
+                                    <strong class="font-bold">Error:</strong> 
+                                    <span>${result.body.message}</span>
+                                </div>
+                            </div>`;
                         }
 
                         // Resume scanning after 2 seconds
@@ -120,7 +157,7 @@
                         errorAudio.play().catch(e => console.log('Audio play failed:', e));
 
                         document.getElementById('result').innerHTML =
-                            `<div class="alert alert-danger">System Error</div>`;
+                            `<div class="p-4 rounded-xl bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800/30">System Error</div>`;
                         setTimeout(() => {
                             html5QrCode.resume();
                             isScanning = true;

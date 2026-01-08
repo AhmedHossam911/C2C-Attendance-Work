@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -6,6 +6,60 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+
+    /* Brand Colors */
+    --color-c2c-blue-50: #eef4ff;
+    --color-c2c-blue-100: #e0eafe;
+    --color-c2c-blue-200: #c5d7fc;
+    --color-c2c-blue-300: #a2bbf8;
+    --color-c2c-blue-400: #7a9af3;
+    --color-c2c-blue-500: #5777eb;
+    --color-c2c-blue-600: #3856dd;
+    --color-c2c-blue-700: #2b43c6;
+    --color-c2c-blue-800: #2636a0;
+    --color-c2c-blue-900: #1e3b8a; /* Base Brand Blue */
+    --color-c2c-blue-950: #192361;
+
+    --color-c2c-teal-50: #effcf9;
+    --color-c2c-teal-100: #cbf9f1;
+    --color-c2c-teal-200: #9bf3e4;
+    --color-c2c-teal-300: #64e8d3;
+    --color-c2c-teal-400: #34d5bd;
+    --color-c2c-teal-500: #14b8a6; /* Base Brand Teal */
+    --color-c2c-teal-600: #0d9488;
+    --color-c2c-teal-700: #0f766e;
+    --color-c2c-teal-800: #115e59;
+    --color-c2c-teal-900: #134e4a;
+    --color-c2c-teal-950: #042f2e;
+
+    --color-c2c-gold-50: #fffbeb;
+    --color-c2c-gold-100: #fef3c7;
+    --color-c2c-gold-200: #fde68a;
+    --color-c2c-gold-300: #fcd34d;
+    --color-c2c-gold-400: #fbbf24;
+    --color-c2c-gold-500: #f59e0b;
+    --color-c2c-gold-600: #d97706;
+    --color-c2c-gold-700: #b45309;
+    --color-c2c-gold-800: #92400e;
+    --color-c2c-gold-900: #78350f;
+    --color-c2c-gold-950: #451a03;
+    --color-brand-accent: #ffc107;
+}
+
+@layer base {
+    body {
+        @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased;
+    }
+}
+
+@layer utilities {
+    .glass {
+        @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/50;
+    }
+    .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    }
 }

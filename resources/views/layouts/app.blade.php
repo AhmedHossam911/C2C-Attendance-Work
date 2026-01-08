@@ -1,200 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full" x-data="{
+    sidebarOpen: false,
+    sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+    darkMode: localStorage.getItem('theme') === 'dark'
+}"
+    :class="{ 'dark': darkMode }" x-init="$watch('darkMode', val => localStorage.setItem('theme', val ? 'dark' : 'light'));
+    $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C2C Attendance System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ asset('c2c logo Color.png') }}" type="image/png">
-    <style>
-        .navbar-dark .navbar-nav .nav-link {
-            color: #ffffff !important;
+
+    <title>{{ config('app.name', 'C2C Attendance') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Instrument Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#1E3B8A',
+                            /* Dark Blue from original */
+                            teal: '#14B8A6',
+                            /* Teal from original */
+                            gold: '#FFC107',
+                            /* Gold/Yellow from original */
+                            dark: '#0F172A',
+                        },
+                        // Expanded palette based on brand
+                        'c2c-blue': {
+                            50: '#eef4ff',
+                            100: '#e0eafe',
+                            200: '#c5d7fc',
+                            300: '#a2bbf8',
+                            400: '#7a9af3',
+                            500: '#5777eb',
+                            49: '#5777eb', // Typo fix in previous palette if any
+                            600: '#3856dd',
+                            700: '#2b43c6',
+                            800: '#2636a0',
+                            900: '#1E3B8A',
+                            /* Adjusted to match brand */
+                            950: '#111827',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass {
+                @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50;
+            }
+
+            .sidebar-link {
+                @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 border border-transparent;
+            }
+
+            .sidebar-link-active {
+                @apply bg-brand-teal/10 text-brand-teal border-brand-teal/20 shadow-sm;
+            }
+
+            .sidebar-link-inactive {
+                @apply text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800/50;
+            }
         }
 
-        .navbar-dark .navbar-brand {
-            color: #ffffff !important;
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* Scrollbar customization for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #374151;
         }
     </style>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-brand navbar-custom">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
-                <img src="{{ asset('c2c logo.png') }}" alt="C2C Logo" class="logo-img">
-                <span>C2C Attendance</span>
-            </a>
-            <button class="btn nav-link theme-toggle-btn ms-auto me-2" title="Toggle theme">
-                <i class="bi bi-moon-stars-fill theme-icon-active"></i>
-            </button>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                @auth
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('committees.index') }}">Committees</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('sessions.index') }}">Sessions</a>
-                            </li>
-                        @endif
-                        @if (Auth::user()->hasRole('top_management'))
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Users
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}">All Users</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('users.pending') }}">Pending
-                                            Approvals</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endif
-                        @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('authorizations.index') }}">HR Access</a>
-                            </li>
-                        @endif
-                        @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('scan.index') }}">Scan QR</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Reports
-                                </a>
-                                <ul class="dropdown-menu">
-                                    @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
-                                        <li><a class="dropdown-item" href="{{ route('reports.index') }}">Committee
-                                                Reports</a></li>
-                                    @endif
-                                    <li><a class="dropdown-item" href="{{ route('reports.member') }}">Member Search</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        @endif
-                    </ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                {{ Auth::user()->name }} ({{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }})
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                @else
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
-                        </li>
-                        <!--
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">Register</a>
-                            </li>
-                            -->
-                    </ul>
-                @endauth
-            </div>
+<body
+    class="font-sans antialiased h-full bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <div class="min-h-screen flex flex-col">
+
+        @include('layouts.partials.sidebar')
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col min-w-0 transition-all duration-300 min-h-screen"
+            :class="sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-72'">
+
+            @include('layouts.partials.topbar')
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 md:p-8 w-full max-w-[1600px] mx-auto">
+                <div class="space-y-6">
+
+
+                    @yield('content')
+                </div>
+            </main>
+
+            @include('layouts.partials.footer')
         </div>
-    </nav>
-
-    <div class="container mt-4 flex-grow-1">
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        @yield('content')
     </div>
 
-    <footer class="text-center text-lg-start mt-auto py-3 bg-brand">
-        <div class="container text-center">
-            <p class="text-white"> Developed by <a href="https://linktr.ee/Ahmed_911" target="_blank"
-                    style="color: #1e3b8a; font-weight: bold; text-decoration: none;">Ahmed Hossam</a> C2C
-                President💙.
-            </p>
-            <p class="text-white">© {{ date('Y') }} C2C Attendance System. All rights reserved.</p>
-        </div>
-        <div class="container text-center mt-2">
-            <a target="_blank" href="https://www.facebook.com/C2C.BIS.Helwan"
-                class="text-white me-3 text-decoration-none footer-social-link"><i
-                    class="bi bi-facebook fs-5"></i></a>
-            <a target="_blank" href="https://www.tiktok.com/@c2c.bis.helwan"
-                class="text-white me-3 text-decoration-none footer-social-link"><i class="bi bi-tiktok fs-5"></i></a>
-            <a target="_blank" href="https://www.instagram.com/c2c.bis.helwan/"
-                class="text-white me-3 text-decoration-none footer-social-link"><i
-                    class="bi bi-instagram fs-5"></i></a>
-            <a target="_blank" href="https://www.linkedin.com/company/c2c-bis-helwan/"
-                class="text-white text-decoration-none footer-social-link"><i class="bi bi-linkedin fs-5"></i></a>
-        </div>
-    </footer>
-    <script>
-        // Theme Toggle Logic
-        const htmlElement = document.documentElement;
-
-        function updateIcons(theme) {
-            const icons = document.querySelectorAll('.theme-icon-active');
-            icons.forEach(icon => {
-                if (theme === 'dark') {
-                    icon.classList.remove('bi-moon-stars-fill');
-                    icon.classList.add('bi-sun-fill');
-                } else {
-                    icon.classList.remove('bi-sun-fill');
-                    icon.classList.add('bi-moon-stars-fill');
-                }
-            });
-        }
-
-        function setTheme(theme) {
-            htmlElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-            updateIcons(theme);
-        }
-
-        const savedTheme = localStorage.getItem('theme');
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        const initialTheme = savedTheme || systemTheme;
-        setTheme(initialTheme);
-
-        document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-bs-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                setTheme(newTheme);
-            });
-        });
-    </script>
+    <x-toast />
     @yield('scripts')
 </body>
 

@@ -60,6 +60,18 @@ class CommitteeController extends Controller
         return redirect()->route('committees.index')->with('success', 'Committee created successfully.');
     }
 
+    public function update(Request $request, Committee $committee)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $committee->update($validated);
+
+        return redirect()->back()->with('success', 'Committee updated successfully.');
+    }
+
     public function show(Request $request, Committee $committee)
     {
         $user = auth()->user();
