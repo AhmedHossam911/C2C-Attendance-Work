@@ -82,37 +82,36 @@
 </head>
 
 <body
-    class="font-sans antialiased h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-brand-teal selection:text-white relative overflow-hidden">
+    class="font-sans antialiased h-full bg-[#e2e8f0] dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-brand-teal selection:text-slate-300 relative overflow-hidden">
 
-    <!-- Background Decor -->
-    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-brand-blue/10 blur-3xl"></div>
-        <div class="absolute top-[30%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-teal/10 blur-3xl"></div>
-    </div>
+    <!-- Background Decor (Removed for clean contrast) -->
+    <div class="fixed inset-0 -z-10 bg-[#e2e8f0] dark:bg-slate-950"></div>
 
     <div class="min-h-screen flex flex-col items-center justify-center p-6">
         <div class="w-full max-w-md">
-            <!-- Theme Toggle (Above Card) -->
-            <div class="flex justify-end mb-4">
-                <button
-                    onclick="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')"
-                    class="p-2 text-slate-500 hover:text-brand-gold bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-full transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700 shadow-sm">
-                    <i class="bi bi-moon-stars-fill dark:hidden"></i>
-                    <i class="bi bi-sun-fill hidden dark:block"></i>
-                </button>
-            </div>
-
-
             <!-- Main Content -->
             <div
-                class="glass rounded-3xl shadow-2xl shadow-brand-blue/5 dark:shadow-black/20 overflow-hidden p-8 border-slate-200/50 dark:border-slate-700/50">
-                @if (session('status'))
-                    <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                        {{ session('status') }}
-                    </div>
-                @endif
+                class="bg-slate-300 dark:bg-slate-800 rounded-3xl shadow-2xl shadow-brand-blue/5 dark:shadow-black/20 overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
 
-                @yield('content')
+                <!-- Full Width Theme Toggle -->
+                <button
+                    onclick="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')"
+                    class="w-full py-3 bg-slate-400 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-center gap-2 hover:bg-slate-500 hover:text-white dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400 font-medium text-sm group">
+                    <i class="bi bi-moon-stars-fill dark:hidden group-hover:text-brand-blue transition-colors"></i>
+                    <i class="bi bi-sun-fill hidden dark:block group-hover:text-yellow-400 transition-colors"></i>
+                    <span class="dark:hidden">Switch to Dark Mode</span>
+                    <span class="hidden dark:inline">Switch to Light Mode</span>
+                </button>
+
+                <div class="p-8">
+                    @if (session('status'))
+                        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    @yield('content')
+                </div>
             </div>
 
             <!-- Footer -->

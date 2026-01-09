@@ -83,7 +83,7 @@
             <nav class="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-20">
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('logo-color.png') }}" alt="Logo"
-                        class="h-10 w-auto bg-slate-50 rounded-full p-1 shadow-sm">
+                        class="h-10 w-auto bg-slate-50 rounded-full p-1 shadow-sm dark:bg-white">
                     <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">C2C
                         Attendance</span>
                 </div>

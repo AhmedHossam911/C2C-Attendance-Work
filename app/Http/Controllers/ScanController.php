@@ -13,12 +13,9 @@ class ScanController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        if ($user->hasRole('hr')) {
-            $committeeIds = $user->authorizedCommittees->pluck('id');
-            $activeSessions = AttendanceSession::where('status', 'open')
-                ->whereIn('committee_id', $committeeIds)
-                ->get();
+        if ($user->hasRole('board')) {
+            // Board can scan for ANY committee (Global Access)
+            $activeSessions = AttendanceSession::where('status', 'open')->get();
         } else {
             $activeSessions = AttendanceSession::where('status', 'open')->get();
         }
@@ -32,11 +29,9 @@ class ScanController extends Controller
         }
 
         $user = Auth::user();
-        if ($user->hasRole('hr')) {
-            if (!$user->authorizedCommittees->contains($session->committee_id)) {
-                return response()->json(['message' => 'Unauthorized session.'], 403);
-            }
-        }
+        $user = Auth::user();
+        // HR Global Access - No restriction needed
+
 
         $request->validate([
             'user_id' => 'required|exists:users,id',

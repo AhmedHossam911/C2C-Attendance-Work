@@ -74,4 +74,14 @@ class User extends Authenticatable
             ->withPivot('granted_by')
             ->withTimestamps();
     }
+
+    public function taskSubmissions()
+    {
+        return $this->hasMany(TaskSubmission::class);
+    }
+
+    public function sessionFeedbacks()
+    {
+        return $this->hasMany(SessionFeedback::class);
+    }
 }

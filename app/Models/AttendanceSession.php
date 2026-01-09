@@ -32,4 +32,14 @@ class AttendanceSession extends Model
     {
         return $this->hasMany(AttendanceRecord::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'session_id');
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(SessionFeedback::class);
+    }
 }

@@ -13,7 +13,8 @@ class AuthorizedCommitteeController extends Controller
     public function index()
     {
         $authorizations = CommitteeAuthorization::with(['user', 'committee', 'granter'])->latest()->paginate(10);
-        $hrUsers = User::where('role', 'hr')->get();
+        $authorizations = CommitteeAuthorization::with(['user', 'committee', 'granter'])->latest()->paginate(10);
+        $hrUsers = User::whereIn('role', ['hr', 'committee_head', 'board', 'vice_head'])->get(); // Expanded roles
         $committees = Committee::all();
 
         return view('admin.authorizations.index', compact('authorizations', 'hrUsers', 'committees'));

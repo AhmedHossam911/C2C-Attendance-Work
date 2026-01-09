@@ -7,21 +7,21 @@
                 <tr>
                     @foreach ($headers as $header)
                         <th
-                            class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 first:pl-6 last:pr-6">
+                            class="px-6 py-4 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 first:pl-6 last:pr-6">
                             {{ $header }}
                         </th>
                     @endforeach
                 </tr>
             </thead>
         @else
-            <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+            <thead class="bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                 <tr>
                     {{ $head ?? '' }}
                 </tr>
             </thead>
         @endif
 
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             {{ $slot }}
         </tbody>
     </table>

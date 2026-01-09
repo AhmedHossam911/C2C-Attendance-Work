@@ -43,7 +43,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:top_management,board,hr,member',
+            'role' => 'required|in:top_management,board,hr,member,committee_head',
             'status' => 'required|in:pending,active,disabled',
         ]);
 
@@ -64,7 +64,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|in:top_management,board,hr,member',
+            'role' => 'required|in:top_management,board,hr,member,committee_head',
             'status' => 'required|in:pending,active,disabled',
         ]);
 

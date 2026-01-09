@@ -2,58 +2,88 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto">
+        {{-- Back Link --}}
+        <div class="mb-4">
+            <a href="{{ route('users.index') }}"
+                class="inline-flex items-center text-sm text-slate-500 hover:text-brand-blue transition-colors">
+                <i class="bi bi-arrow-left mr-2"></i> Back to Users
+            </a>
+        </div>
+
         <x-card>
             <x-slot name="header">
-                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Create User</h3>
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-brand-blue/10 rounded-xl">
+                        <i class="bi bi-person-plus-fill text-brand-blue text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">Create New User</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Add a new user to the system</p>
+                    </div>
+                </div>
             </x-slot>
 
-            <form method="POST" action="{{ route('users.store') }}" class="space-y-4">
+            <form method="POST" action="{{ route('users.store') }}" class="space-y-5">
                 @csrf
+
+                {{-- Name --}}
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Name</label>
-                    <input type="text" name="name"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                        required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
-                    <input type="email" name="email"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                        required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
-                    <input type="password" name="password"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                        required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Role</label>
-                    <select name="role"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                        required>
-                        <option value="member">Member</option>
-                        <option value="hr">HR</option>
-                        <option value="board">Board</option>
-                        <option value="top_management">Top Management</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                    <select name="status"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                        required>
-                        <option value="active">Active</option>
-                        <option value="pending">Pending</option>
-                        <option value="disabled">Disabled</option>
-                    </select>
+                    <x-input-label for="name" icon="bi-person">Full Name</x-input-label>
+                    <x-text-input type="text" name="name" id="name" class="w-full mt-1"
+                        placeholder="Enter full name" value="{{ old('name') }}" required />
+                    <x-input-error :messages="$errors->get('name')" class="mt-1.5" />
                 </div>
 
-                <div class="pt-4">
-                    <button type="submit"
-                        class="w-full px-5 py-2.5 bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl shadow-lg shadow-brand-blue/20 transition-all active:scale-95">
-                        Create User
-                    </button>
+                {{-- Email --}}
+                <div>
+                    <x-input-label for="email" icon="bi-envelope">Email Address</x-input-label>
+                    <x-text-input type="email" name="email" id="email" class="w-full mt-1"
+                        placeholder="user@example.com" value="{{ old('email') }}" required />
+                    <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
+                </div>
+
+                {{-- Password --}}
+                <div>
+                    <x-input-label for="password" icon="bi-lock">Password</x-input-label>
+                    <x-text-input type="password" name="password" id="password" class="w-full mt-1"
+                        placeholder="Minimum 8 characters" required />
+                    <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
+                </div>
+
+                {{-- Role & Status Grid --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <x-input-label for="role" icon="bi-person-badge">Role</x-input-label>
+                        <x-select-input name="role" id="role" class="w-full mt-1" required>
+                            <option value="member" {{ old('role') == 'member' ? 'selected' : '' }}>Member</option>
+                            <option value="committee_head" {{ old('role') == 'committee_head' ? 'selected' : '' }}>Committee
+                                Head</option>
+                            <option value="hr" {{ old('role') == 'hr' ? 'selected' : '' }}>HR</option>
+                            <option value="board" {{ old('role') == 'board' ? 'selected' : '' }}>Board</option>
+                            <option value="top_management" {{ old('role') == 'top_management' ? 'selected' : '' }}>Top
+                                Management</option>
+                        </x-select-input>
+                        <x-input-error :messages="$errors->get('role')" class="mt-1.5" />
+                    </div>
+                    <div>
+                        <x-input-label for="status" icon="bi-toggle-on">Status</x-input-label>
+                        <x-select-input name="status" id="status" class="w-full mt-1" required>
+                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="disabled" {{ old('status') == 'disabled' ? 'selected' : '' }}>Disabled</option>
+                        </x-select-input>
+                        <x-input-error :messages="$errors->get('status')" class="mt-1.5" />
+                    </div>
+                </div>
+
+                {{-- Actions --}}
+                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                    <x-secondary-button href="{{ route('users.index') }}" class="flex-1 justify-center py-2.5 text-center">
+                        Cancel
+                    </x-secondary-button>
+                    <x-primary-button class="flex-1 justify-center py-2.5">
+                        <i class="bi bi-check-lg mr-2"></i> Create User
+                    </x-primary-button>
                 </div>
             </form>
         </x-card>

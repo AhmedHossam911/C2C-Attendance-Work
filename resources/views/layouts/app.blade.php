@@ -36,10 +36,10 @@
                     },
                     colors: {
                         brand: {
-                            blue: '#1E3B8A',
-                            /* Dark Blue from original */
-                            teal: '#14B8A6',
-                            /* Teal from original */
+                            blue: '#1e3a8a',
+                            /* Brand Blue */
+                            teal: '#14b8a6',
+                            /* Brand Teal */
                             gold: '#FFC107',
                             /* Gold/Yellow from original */
                             dark: '#0F172A',
@@ -68,7 +68,7 @@
     <style type="text/tailwindcss">
         @layer utilities {
             .glass {
-                @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50;
+                @apply bg-slate-200/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-slate-200/50 dark:border-gray-800/50;
             }
 
             .sidebar-link {
@@ -76,11 +76,35 @@
             }
 
             .sidebar-link-active {
-                @apply bg-brand-teal/10 text-brand-teal border-brand-teal/20 shadow-sm;
+                @apply bg-brand-blue/10 text-brand-blue border-brand-blue/20 shadow-sm;
             }
 
             .sidebar-link-inactive {
-                @apply text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800/50;
+                @apply text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800/50;
+            }
+
+            .animate-fade-in-up {
+                animation: fadeInUp 0.5s ease-out forwards;
+            }
+
+            .animation-delay-100 {
+                animation-delay: 100ms;
+            }
+
+            .animation-delay-200 {
+                animation-delay: 200ms;
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         }
 
@@ -109,10 +133,13 @@
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- HTML5-QRCode -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body
-    class="font-sans antialiased h-full bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    class="font-sans antialiased h-full bg-[#e2e8f0] dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-300">
 
     <div class="min-h-screen flex flex-col">
 

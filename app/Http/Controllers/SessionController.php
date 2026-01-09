@@ -13,10 +13,20 @@ class SessionController extends Controller
         $user = Auth::user();
         $query = AttendanceSession::with('committee')->withCount('records');
 
-        if ($user->hasRole('hr')) {
-            // HR sees sessions for their authorized committees
-            $committeeIds = $user->authorizedCommittees->pluck('id');
-            $query->whereIn('committee_id', $committeeIds);
+        // Role-based Access Control
+        if ($user->hasRole('top_management') || $user->hasRole('board')) {
+            // Can view all sessions
+        } elseif ($user->hasRole('hr')) {
+            // HR: View sessions for Authorized Committees AND Member Committees
+            $authorizedIds = $user->authorizedCommittees->pluck('id');
+            $memberIds = $user->committees->pluck('id');
+            $query->whereIn('committee_id', $authorizedIds->merge($memberIds)->unique());
+        } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head')) {
+            // Heads: View sessions for Authorized Committees
+            $query->whereIn('committee_id', $user->authorizedCommittees->pluck('id'));
+        } else {
+            // Members: View sessions for Member Committees only
+            $query->whereIn('committee_id', $user->committees->pluck('id'));
         }
 
         if ($request->filled('committee_id')) {
@@ -36,16 +46,50 @@ class SessionController extends Controller
         }
 
         $sessions = $query->latest()->paginate(10)->withQueryString();
-        $committees = \App\Models\Committee::all(); // For filter dropdown
 
-        return view('sessions.index', compact('sessions', 'committees'));
+        // Filter valid committees for the filter dropdown
+        if ($user->hasRole('top_management') || $user->hasRole('board')) {
+            $committees = \App\Models\Committee::all();
+        } elseif ($user->hasRole('hr')) {
+            $committees = $user->authorizedCommittees->merge($user->committees)->unique('id');
+        } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head')) {
+            $committees = $user->authorizedCommittees;
+        } else {
+            $committees = $user->committees;
+        }
+
+        // Prepare authorizedCommitteeIds for View Logic (used in manage checks)
+        $authorizedCommitteeIds = [];
+        if ($user->authorizedCommittees->isNotEmpty()) {
+            $authorizedCommitteeIds = $user->authorizedCommittees->pluck('id')->toArray();
+        }
+
+        return view('sessions.index', compact('sessions', 'committees', 'authorizedCommitteeIds'));
     }
 
     public function export(AttendanceSession $session)
     {
-        // Check permission: HR can only export their own authorized committee sessions
+        // Check permission: HR/Head/Board can only export their own authorized committee sessions
+        // Board/Top Management might be allowed all? Assuming Board follows Authorized for specific actions or Global?
+        // Let's allow Board/Top Global, others Authorized.
         $user = Auth::user();
-        if ($user->hasRole('hr') && !$user->authorizedCommittees->contains($session->committee_id)) {
+
+        if ($user->hasRole('top_management')) {
+            // Allowed
+        } elseif ($user->hasRole('board')) {
+            // Board viewed all, so should be able to export all? Or restricted? 
+            // "Board can only update authorized" in TaskPolicy. Let's restrict to Authorized for consistency if Board is managing specific committees, but allowing global view.
+            // However, for Sessions, usually Board has high oversight.
+            // User's reverted edit: "if in_array(hr, board...) && !authorized -> abort". This implies Board also restricted to Authorized for ACTIONS.
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        } elseif (in_array($user->role, ['hr', 'committee_head', 'vice_head'])) {
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        } else {
+            // Regular members cannot export
             abort(403, 'Unauthorized action.');
         }
 
@@ -55,10 +99,17 @@ class SessionController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if ($user->hasRole('hr')) {
+
+        if ($user->hasRole('top_management')) {
+            $committees = \App\Models\Committee::all();
+        } elseif ($user->hasRole('board')) {
+            // Board can create for Authorized only? 
+            // "HR Board can only create tasks for Authorized committees" (TaskPolicy).
+            $committees = $user->authorizedCommittees;
+        } elseif ($user->hasRole('hr') || $user->hasRole('committee_head') || $user->hasRole('vice_head')) {
             $committees = $user->authorizedCommittees;
         } else {
-            $committees = \App\Models\Committee::all();
+            abort(403, 'Unauthorized.');
         }
         return view('sessions.create', compact('committees'));
     }
@@ -73,11 +124,17 @@ class SessionController extends Controller
         ]);
 
         $user = Auth::user();
-        if ($user->hasRole('hr')) {
-            // Verify HR is authorized for this committee
+        $user = Auth::user();
+
+        // Enforce authorization
+        if ($user->hasRole('top_management')) {
+            // Allowed
+        } elseif (in_array($user->role, ['hr', 'board', 'committee_head', 'vice_head'])) {
             if (!$user->authorizedCommittees->contains($validated['committee_id'])) {
                 return back()->withErrors(['committee_id' => 'You are not authorized for this committee.']);
             }
+        } else {
+            abort(403, 'Unauthorized.');
         }
 
         // Check if there is already an open session for this committee
@@ -118,6 +175,18 @@ class SessionController extends Controller
 
     public function toggleStatus(AttendanceSession $session)
     {
+        $user = Auth::user();
+
+        if ($user->hasRole('top_management')) {
+            // Allowed
+        } elseif (in_array($user->role, ['hr', 'board', 'committee_head', 'vice_head'])) {
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        } else {
+            abort(403, 'Unauthorized.');
+        }
+
         $session->status = $session->status === 'open' ? 'closed' : 'open';
         $session->save();
 

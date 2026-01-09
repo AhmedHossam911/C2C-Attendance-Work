@@ -40,6 +40,34 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Task System Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('tasks', App\Http\Controllers\TaskController::class);
+    Route::post('/tasks/{task}/remind', [App\Http\Controllers\TaskController::class, 'remind'])->name('tasks.remind');
+    Route::post('/tasks/{task}/submit', [App\Http\Controllers\TaskSubmissionController::class, 'store'])->name('tasks.submit');
+    Route::patch('/submissions/{submission}', [App\Http\Controllers\TaskSubmissionController::class, 'update'])->name('submissions.update');
+
+    Route::post('/sessions/{session}/feedback', [App\Http\Controllers\SessionFeedbackController::class, 'store'])->name('sessions.feedback');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [App\Http\Controllers\NotificationController::class, 'unread'])->name('notifications.unread');
+    Route::post('/notifications/{notification}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Top Management Only
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
     | Top Management Only
     |--------------------------------------------------------------------------
     */
@@ -55,6 +83,9 @@ Route::middleware(['auth'])->group(function () {
         // Committees (Top Management can manage, except index/show)
         Route::resource('committees', CommitteeController::class)->except(['index', 'show']);
 
+        // Authorizations
+        Route::resource('authorizations', \App\Http\Controllers\AuthorizedCommitteeController::class)->only(['index', 'store', 'destroy']);
+
         // Import/Export
         Route::get('/export-import', [App\Http\Controllers\ExportImportController::class, 'index'])->name('export_import.index');
         Route::post('/import-users', [App\Http\Controllers\ExportImportController::class, 'importUsers'])->name('import.users');
@@ -64,19 +95,11 @@ Route::middleware(['auth'])->group(function () {
 
         // Send QR Emails
         Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');
-        Route::get('/qr-image/{id}', [App\Http\Controllers\QrEmailController::class, 'showImage'])->name('qr.image');
-    });
 
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Top Management + Board
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware(['checkRole:top_management,board'])->group(function () {
-        // Authorizations
-        Route::resource('authorizations', \App\Http\Controllers\AuthorizedCommitteeController::class)->only(['index', 'store', 'destroy']);
+        // Reports - Top Management Only
+        Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
+        Route::get('/reports/export/committees', [ReportController::class, 'exportCommittees'])->name('reports.export.committees');
+        Route::get('/reports/export/members', [ReportController::class, 'exportMembers'])->name('reports.export.members');
     });
 
     /*
@@ -87,13 +110,44 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware(['checkRole:top_management,board,hr'])->group(function () {
 
-        // Sessions
-        Route::resource('sessions', SessionController::class)->except(['edit', 'update', 'destroy']);
+        // Sessions (Modify)
+        Route::get('/sessions/create', [SessionController::class, 'create'])->name('sessions.create');
+        Route::post('/sessions', [SessionController::class, 'store'])->name('sessions.store');
         Route::post('/sessions/{session}/toggle', [SessionController::class, 'toggleStatus'])->name('sessions.toggle');
         Route::get('/sessions/{session}/export', [SessionController::class, 'export'])->name('sessions.export');
 
         // Attendance Management (Edit/Delete - Controller handles specific permission checks)
         Route::resource('attendance', \App\Http\Controllers\AttendanceController::class)->only(['update', 'destroy']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Board + Top Management (No HR)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['checkRole:top_management,board'])->group(function () {
+        Route::get('/sessions/{session}/feedback-results', [SessionController::class, 'feedbackResults'])->name('sessions.feedback-results');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | General Authenticated Routes (Members + Everyone)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
+        Route::get('/sessions/{session}', [SessionController::class, 'show'])->name('sessions.show');
+        Route::get('/sessions/{session}/feedback/create', [SessionController::class, 'createFeedback'])->name('sessions.feedback.create');
+        Route::post('/sessions/{session}/feedback', [App\Http\Controllers\SessionFeedbackController::class, 'store'])->name('sessions.feedback');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Board + Top Management + HR + Committee Head
+    | Requirement: Board can create attendance sessions. HR/Head can also create sessions for their committees.
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['checkRole:top_management,board,hr,committee_head'])->group(function () {
 
         // Committee View/Show
         Route::get('/committees', [CommitteeController::class, 'index'])->name('committees.index');
@@ -114,13 +168,24 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Reports (Top Management, Board, HR)
+    | Reports (Top Management, Board, Committee Head) - NO HR
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['checkRole:top_management,board,hr'])->group(function () {
+    Route::middleware(['checkRole:top_management,board,committee_head'])->group(function () {
+        // Reports - Dashboard
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('/reports/export-committees', [ReportController::class, 'exportCommittees'])->name('reports.export.committees');
-        Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
-        Route::get('/reports/export-members', [ReportController::class, 'exportMembers'])->name('reports.export.members');
+
+        // Reports - Individual
+        Route::get('/reports/committees', [ReportController::class, 'committees'])->name('reports.committees');
+        Route::get('/reports/ghost-members', [ReportController::class, 'ghostMembers'])->name('reports.ghost_members');
+        Route::get('/reports/committee-performance', [ReportController::class, 'committeePerformance'])->name('reports.committee_performance');
+        Route::get('/reports/top-performers', [ReportController::class, 'topPerformers'])->name('reports.top_performers');
+        Route::get('/reports/session-quality', [ReportController::class, 'sessionQuality'])->name('reports.session_quality');
+        Route::get('/reports/attendance-trends', [ReportController::class, 'attendanceTrends'])->name('reports.attendance_trends');
+
+
+
+        // QR Image (Shared access for verification)
+        Route::get('/qr-image/{id}', [App\Http\Controllers\QrEmailController::class, 'showImage'])->name('qr.image');
     });
 });

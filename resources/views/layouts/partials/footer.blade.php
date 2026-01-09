@@ -1,5 +1,5 @@
 <footer
-    class="bg-white dark:bg-[#020617] border-t border-slate-200 dark:border-slate-800/60 py-6 transition-colors duration-300">
+    class="bg-slate-300 dark:bg-[#020617] border-t border-slate-200 dark:border-slate-800/60 py-6 transition-all duration-300 ease-in-out">
     <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <!-- Left: Developer Info -->

@@ -12,7 +12,7 @@ class CommitteeController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('hr')) {
+        if ($user->hasRole('hr') || $user->hasRole('committee_head')) {
             $query = $user->authorizedCommittees();
         } else {
             $query = Committee::query();
@@ -75,6 +75,12 @@ class CommitteeController extends Controller
     public function show(Request $request, Committee $committee)
     {
         $user = auth()->user();
+
+        // Check if Committee Head is authorized for this committee
+        if ($user->hasRole('committee_head') && !$user->authorizedCommittees->contains($committee->id)) {
+            abort(403, 'Unauthorized access to this committee.');
+        }
+
         $query = $committee->users();
 
         // Privacy Filter: Hide Top Management, Board, and HR unless user is Top Management

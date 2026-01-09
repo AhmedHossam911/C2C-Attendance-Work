@@ -1,86 +1,272 @@
 @extends('layouts.app')
 
 @section('content')
+    {{-- Back Link --}}
+    <div class="mb-4">
+        <a href="{{ route('committees.index') }}"
+            class="inline-flex items-center text-sm text-slate-500 hover:text-brand-blue transition-colors">
+            <i class="bi bi-arrow-left mr-2"></i> Back to Committees
+        </a>
+    </div>
+
+    {{-- Header --}}
     <div class="mb-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-800 dark:text-white">{{ $committee->name }}</h2>
-                <p class="text-slate-500 dark:text-slate-400 mt-1">{{ $committee->description }}</p>
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+                <div class="hidden sm:flex p-3 bg-gradient-to-br from-brand-blue/10 to-brand-teal/10 rounded-xl">
+                    <i class="bi bi-people-fill text-brand-blue text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">{{ $committee->name }}</h2>
+                    @if ($committee->description)
+                        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm line-clamp-2">
+                            {{ $committee->description }}</p>
+                    @endif
+                </div>
             </div>
-            <div>
-                <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/20 dark:text-brand-blue-light">
-                    Total Members: {{ $committee->users->count() }}
-                </span>
-            </div>
+            <span
+                class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/20">
+                <i class="bi bi-person-fill mr-2"></i> {{ $committee->users->count() }} Members
+            </span>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Members List -->
         <div class="lg:col-span-2">
-            <x-card class="p-0" :embedded="true">
-                <x-slot name="header">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">Members</h3>
-                        <form action="{{ route('committees.show', $committee) }}" method="GET"
-                            class="flex items-center gap-2 w-full sm:w-auto">
-                            <div class="relative w-full sm:w-64">
-                                <input type="text" name="search"
-                                    class="w-full pl-4 pr-10 py-2 rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-sm focus:border-brand-blue focus:ring-brand-blue dark:text-white"
-                                    placeholder="Search Members..." value="{{ request('search') }}">
-                                <button type="submit"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-blue transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </button>
+            {{-- Desktop Table --}}
+            <div class="hidden md:block">
+                <x-card class="p-0" :embedded="true">
+                    <x-slot name="header">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-center gap-2">
+                                <i class="bi bi-person-lines-fill text-slate-400"></i>
+                                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Members</h3>
                             </div>
-                        </form>
-                    </div>
-                </x-slot>
+                            <form action="{{ route('committees.show', $committee) }}" method="GET"
+                                class="flex items-center gap-2">
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                        <i class="bi bi-search text-sm"></i>
+                                    </div>
+                                    <x-text-input type="text" name="search" class="pl-9 py-2 text-sm w-56"
+                                        placeholder="Search members..." value="{{ request('search') }}" />
+                                </div>
+                                @if (request('search'))
+                                    <a href="{{ route('committees.show', $committee) }}"
+                                        class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                                        <i class="bi bi-x-circle"></i>
+                                    </a>
+                                @endif
+                            </form>
+                        </div>
+                    </x-slot>
 
-                <x-table :headers="[
-                    'No',
-                    'Name',
-                    'Email',
-                    Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') ? 'Actions' : '',
-                ]">
-                    @forelse ($members as $member)
-                        <x-table.tr>
-                            <x-table.td>{{ $loop->iteration }}</x-table.td>
-                            <x-table.td class="font-bold text-slate-800 dark:text-white">{{ $member->name }}</x-table.td>
-                            <x-table.td>{{ $member->email }}</x-table.td>
-                            @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board'))
+                    <x-table :headers="[
+                        '#',
+                        'Member',
+                        'Email',
+                        Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') ? 'Actions' : '',
+                    ]">
+                        @forelse ($members as $member)
+                            <x-table.tr>
+                                <x-table.td class="text-slate-400 text-sm">{{ $loop->iteration }}</x-table.td>
                                 <x-table.td>
-                                    <form action="{{ route('committees.remove', [$committee, $member]) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to remove this member?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition-colors">
-                                            Remove
-                                        </button>
-                                    </form>
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-blue to-brand-teal flex items-center justify-center text-white text-xs font-bold">
+                                            {{ substr($member->name, 0, 1) }}
+                                        </div>
+                                        <span
+                                            class="font-semibold text-slate-800 dark:text-white">{{ $member->name }}</span>
+                                    </div>
                                 </x-table.td>
-                            @endif
-                        </x-table.tr>
-                    @empty
-                        <x-table.tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400 italic">No
-                                members found.</td>
-                        </x-table.tr>
-                    @endforelse
-                </x-table>
+                                <x-table.td class="text-slate-500 dark:text-slate-400">{{ $member->email }}</x-table.td>
+                                @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board'))
+                                    <x-table.td>
+                                        <form action="{{ route('committees.remove', [$committee, $member]) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Remove {{ $member->name }} from this committee?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="px-3.5 py-2 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5">
+                                                <i class="bi bi-x-circle"></i> Remove
+                                            </button>
+                                        </form>
+                                    </x-table.td>
+                                @endif
+                            </x-table.tr>
+                        @empty
+                            <x-table.tr>
+                                <td colspan="4" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-full mb-3">
+                                            <i class="bi bi-person-x text-2xl text-slate-400"></i>
+                                        </div>
+                                        <p class="text-slate-500 dark:text-slate-400 font-medium">No members found</p>
+                                        @if (request('search'))
+                                            <p class="text-xs text-slate-400 mt-1">Try adjusting your search</p>
+                                        @endif
+                                    </div>
+                                </td>
+                            </x-table.tr>
+                        @endforelse
+                    </x-table>
 
+                    {{-- Desktop Pagination --}}
+                    @if ($members->hasPages())
+                        <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-slate-600 dark:text-slate-400">
+                                    Showing <span
+                                        class="font-semibold text-slate-800 dark:text-slate-200">{{ $members->firstItem() }}</span>
+                                    to <span
+                                        class="font-semibold text-slate-800 dark:text-slate-200">{{ $members->lastItem() }}</span>
+                                    of <span
+                                        class="font-semibold text-slate-800 dark:text-slate-200">{{ $members->total() }}</span>
+                                </p>
+                                <div class="flex items-center gap-1">
+                                    @if ($members->onFirstPage())
+                                        <span
+                                            class="inline-flex items-center justify-center w-10 h-10 text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed rounded-xl">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </span>
+                                    @else
+                                        <a href="{{ $members->previousPageUrl() }}"
+                                            class="inline-flex items-center justify-center w-10 h-10 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-brand-blue transition-all">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    @endif
+
+                                    @foreach ($members->getUrlRange(1, $members->lastPage()) as $page => $url)
+                                        @if ($page == $members->currentPage())
+                                            <span
+                                                class="inline-flex items-center justify-center w-10 h-10 text-white font-bold bg-brand-blue rounded-xl shadow-sm">{{ $page }}</span>
+                                        @else
+                                            <a href="{{ $url }}"
+                                                class="inline-flex items-center justify-center w-10 h-10 text-slate-600 dark:text-slate-400 font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-brand-blue transition-all">
+                                                {{ $page }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+
+                                    @if ($members->hasMorePages())
+                                        <a href="{{ $members->nextPageUrl() }}"
+                                            class="inline-flex items-center justify-center w-10 h-10 text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-brand-blue transition-all">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center justify-center w-10 h-10 text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed rounded-xl">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </x-card>
+            </div>
+
+            {{-- Mobile Cards --}}
+            <div class="md:hidden space-y-4">
+                {{-- Search --}}
+                <form action="{{ route('committees.show', $committee) }}" method="GET" class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="bi bi-search text-sm"></i>
+                        </div>
+                        <x-text-input type="text" name="search" class="pl-9 py-2.5 text-sm"
+                            placeholder="Search members..." value="{{ request('search') }}" />
+                    </div>
+                    @if (request('search'))
+                        <a href="{{ route('committees.show', $committee) }}"
+                            class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-red-500 rounded-xl transition-colors">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    @endif
+                </form>
+
+                @forelse ($members as $member)
+                    <x-card class="relative overflow-hidden">
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-12 w-12 rounded-full bg-gradient-to-br from-brand-blue to-brand-teal flex items-center justify-center text-white text-lg font-bold shadow-md">
+                                    {{ substr($member->name, 0, 1) }}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 dark:text-white">{{ $member->name }}</h4>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+                                        {{ $member->email }}</p>
+                                </div>
+                            </div>
+                            @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board'))
+                                <form action="{{ route('committees.remove', [$committee, $member]) }}" method="POST"
+                                    onsubmit="return confirm('Remove {{ $member->name }} from this committee?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="p-2.5 bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-xl transition-all">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </x-card>
+                @empty
+                    <x-card class="text-center py-10">
+                        <div class="flex flex-col items-center">
+                            <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-full mb-3">
+                                <i class="bi bi-person-x text-2xl text-slate-400"></i>
+                            </div>
+                            <p class="text-slate-500 dark:text-slate-400 font-medium">No members found</p>
+                            @if (request('search'))
+                                <p class="text-xs text-slate-400 mt-1">Try adjusting your search</p>
+                            @endif
+                        </div>
+                    </x-card>
+                @endforelse
+
+                {{-- Mobile Pagination --}}
                 @if ($members->hasPages())
-                    <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-800">
-                        {{ $members->links() }}
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex-1 flex justify-start">
+                            @if ($members->onFirstPage())
+                                <span
+                                    class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed rounded-xl">
+                                    <i class="bi bi-chevron-left mr-1"></i> Previous
+                                </span>
+                            @else
+                                <a href="{{ $members->previousPageUrl() }}"
+                                    class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                                    <i class="bi bi-chevron-left mr-1"></i> Previous
+                                </a>
+                            @endif
+                        </div>
+
+                        <div class="px-4 text-sm text-slate-600 dark:text-slate-400 font-medium">
+                            {{ $members->currentPage() }} / {{ $members->lastPage() }}
+                        </div>
+
+                        <div class="flex-1 flex justify-end">
+                            @if ($members->hasMorePages())
+                                <a href="{{ $members->nextPageUrl() }}"
+                                    class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                                    Next <i class="bi bi-chevron-right ml-1"></i>
+                                </a>
+                            @else
+                                <span
+                                    class="inline-flex items-center px-4 py-2.5 text-sm font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed rounded-xl">
+                                    Next <i class="bi bi-chevron-right ml-1"></i>
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 @endif
-            </x-card>
+            </div>
         </div>
 
         <!-- Add Member -->
@@ -88,35 +274,39 @@
             <div class="lg:col-span-1">
                 <x-card>
                     <x-slot name="header">
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">Add Member</h3>
+                        <div class="flex items-center gap-2">
+                            <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                                <i class="bi bi-person-plus-fill text-green-600 dark:text-green-400"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800 dark:text-white">Add Member</h3>
+                        </div>
                     </x-slot>
 
                     <form action="{{ route('committees.assign', $committee) }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Search
-                                User</label>
-                            <input type="text" id="userSearch"
-                                class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white text-sm"
-                                placeholder="Type to filter...">
+                            <x-input-label class="mb-2">
+                                <i class="bi bi-search text-slate-400 mr-1"></i> Search User
+                            </x-input-label>
+                            <x-text-input type="text" id="userSearch" placeholder="Type to filter..." />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Select
-                                User</label>
+                            <x-input-label class="mb-2">
+                                <i class="bi bi-person text-slate-400 mr-1"></i> Select User
+                            </x-input-label>
                             <select name="user_id" id="userSelect"
-                                class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:border-brand-blue focus:ring-brand-blue dark:text-white text-sm"
-                                required size="5">
-                                <option value="">Choose...</option>
+                                class="w-full px-4 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 dark:text-white text-sm transition-all"
+                                required size="6">
+                                <option value="">Choose a user...</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit"
-                            class="w-full px-5 py-2.5 bg-brand-blue hover:bg-brand-blue/90 text-white font-semibold rounded-xl shadow-lg shadow-brand-blue/20 transition-all active:scale-95">
-                            Add to Committee
-                        </button>
+                        <x-primary-button type="submit" class="w-full justify-center py-3">
+                            <i class="bi bi-person-plus mr-1"></i> Add to Committee
+                        </x-primary-button>
                     </form>
                 </x-card>
 
@@ -129,7 +319,6 @@
                         for (var i = 0; i < options.length; i++) {
                             var option = options[i];
                             var text = option.text.toLowerCase();
-                            // Keep the placeholder option always visible or handle appropriately (usually skipped or matched if empty)
                             if (option.value === "") {
                                 option.style.display = "";
                                 continue;
