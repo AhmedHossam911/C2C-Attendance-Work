@@ -57,7 +57,7 @@ class TaskController extends Controller
             }
         }
 
-        return view('tasks.index', compact('committees', 'selectedCommittee', 'tasks'));
+        return view('Common.Tasks.index', compact('committees', 'selectedCommittee', 'tasks'));
     }
 
     public function create()
@@ -71,7 +71,7 @@ class TaskController extends Controller
             abort(403);
         }
 
-        return view('tasks.create', compact('committees', 'sessions'));
+        return view('Common.Tasks.create', compact('committees', 'sessions'));
     }
 
     public function store(Request $request)
@@ -160,7 +160,7 @@ class TaskController extends Controller
 
         $task->loadCount('submissions');
 
-        return view('tasks.show', compact('task', 'submission', 'submissions'));
+        return view('Common.Tasks.show', compact('task', 'submission', 'submissions'));
     }
 
     public function edit(Task $task)
@@ -173,7 +173,7 @@ class TaskController extends Controller
         // Fetch sessions for the committee this task is assigned to
         $sessions = \App\Models\AttendanceSession::where('committee_id', $task->committee_id)->latest()->get();
 
-        return view('tasks.edit', compact('task', 'committees', 'sessions'));
+        return view('Common.Tasks.edit', compact('task', 'committees', 'sessions'));
     }
 
     public function update(Request $request, Task $task)

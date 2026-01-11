@@ -13,13 +13,21 @@ class ScanController extends Controller
 {
     public function index()
     {
-        if ($user->hasRole('board')) {
-            // Board can scan for ANY committee (Global Access)
+        $user = Auth::user(); // Ensure $user is defined
+
+        if (in_array($user->role, ['top_management', 'board'])) {
+            // Full Access: Show all open sessions
             $activeSessions = AttendanceSession::where('status', 'open')->get();
+        } elseif ($user->hasRole('hr')) {
+            // HR: Authorized Only
+            $activeSessions = AttendanceSession::where('status', 'open')
+                ->whereIn('committee_id', $user->authorizedCommittees->pluck('id'))
+                ->get();
         } else {
-            $activeSessions = AttendanceSession::where('status', 'open')->get();
+            // Heads & Members: Deny
+            abort(403, 'Unauthorized.');
         }
-        return view('scan.index', compact('activeSessions'));
+        return view('Board.Scan.index', compact('activeSessions'));
     }
 
     public function store(Request $request, AttendanceSession $session)
@@ -29,9 +37,17 @@ class ScanController extends Controller
         }
 
         $user = Auth::user();
-        $user = Auth::user();
-        // HR Global Access - No restriction needed
 
+        if ($user->hasRole('top_management') || $user->hasRole('board')) {
+            // Allowed
+        } elseif ($user->hasRole('hr')) {
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                abort(403, 'Unauthorized action.');
+            }
+        } else {
+            // Heads & Members: Deny
+            abort(403, 'Unauthorized.');
+        }
 
         $request->validate([
             'user_id' => 'required|exists:users,id',

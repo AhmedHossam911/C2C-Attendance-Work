@@ -10,14 +10,28 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthorizedCommitteeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $authorizations = CommitteeAuthorization::with(['user', 'committee', 'granter'])->latest()->paginate(10);
-        $authorizations = CommitteeAuthorization::with(['user', 'committee', 'granter'])->latest()->paginate(10);
-        $hrUsers = User::whereIn('role', ['hr', 'committee_head', 'board', 'vice_head'])->get(); // Expanded roles
-        $committees = Committee::all();
+        $query = CommitteeAuthorization::with(['user', 'committee', 'granter']);
 
-        return view('admin.authorizations.index', compact('authorizations', 'hrUsers', 'committees'));
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                    ->orWhereHas('committee', function ($c) use ($search) {
+                        $c->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $authorizations = $query->latest()->paginate(10)->withQueryString();
+        $hrUsers = User::whereIn('role', ['hr', 'committee_head', 'board', 'vice_head'])->orderBy('name')->get();
+        $committees = Committee::orderBy('name')->get();
+
+        return view('Top Management.Authorizations.index', compact('authorizations', 'hrUsers', 'committees'));
     }
 
     public function store(Request $request)

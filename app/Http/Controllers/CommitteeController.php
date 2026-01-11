@@ -13,6 +13,8 @@ class CommitteeController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('hr') || $user->hasRole('committee_head')) {
+            // HR: View Authorized Only (Hide own committee membership)
+            // Head: View Authorized Only
             $query = $user->authorizedCommittees();
         } else {
             $query = Committee::query();
@@ -40,12 +42,12 @@ class CommitteeController extends Controller
             });
         }
 
-        return view('committees.index', compact('committees'));
+        return view('Heads.Committees.index', compact('committees'));
     }
 
     public function create()
     {
-        return view('committees.create');
+        return view('Top Management.Committees.create');
     }
 
     public function store(Request $request)
@@ -123,7 +125,7 @@ class CommitteeController extends Controller
 
         $users = $usersQuery->get();
 
-        return view('committees.show', compact('committee', 'members', 'users'));
+        return view('Heads.Committees.show', compact('committee', 'members', 'users'));
     }
 
     public function assignUser(Request $request, Committee $committee)
@@ -132,6 +134,10 @@ class CommitteeController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
+        if (!auth()->user()->hasRole('top_management')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $committee->users()->syncWithoutDetaching($request->user_id);
 
         return back()->with('success', 'User assigned to committee.');
@@ -139,6 +145,10 @@ class CommitteeController extends Controller
 
     public function removeUser(Committee $committee, User $user)
     {
+        if (!auth()->user()->hasRole('top_management')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $committee->users()->detach($user->id);
         return back()->with('success', 'User removed from committee.');
     }

@@ -29,12 +29,12 @@ class UserController extends Controller
         }
 
         $users = $query->paginate(15)->withQueryString();
-        return view('users.index', compact('users'));
+        return view('Top Management.Users.index', compact('users'));
     }
 
     public function create()
     {
-        return view('users.create');
+        return view('Top Management.Users.create');
     }
 
     public function store(Request $request)
@@ -56,7 +56,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        return view('Top Management.Users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -80,7 +80,7 @@ class UserController extends Controller
     public function pending()
     {
         $users = User::where('status', 'pending')->get();
-        return view('users.pending', compact('users'));
+        return view('Top Management.Users.pending', compact('users'));
     }
 
     public function approve(User $user)

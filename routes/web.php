@@ -86,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
         // Authorizations
         Route::resource('authorizations', \App\Http\Controllers\AuthorizedCommitteeController::class)->only(['index', 'store', 'destroy']);
 
+        // Report Permissions
+        Route::get('/report-permissions', [App\Http\Controllers\ReportPermissionController::class, 'index'])->name('report-permissions.index');
+        Route::post('/report-permissions', [App\Http\Controllers\ReportPermissionController::class, 'update'])->name('report-permissions.update');
+
         // Import/Export
         Route::get('/export-import', [App\Http\Controllers\ExportImportController::class, 'index'])->name('export_import.index');
         Route::post('/import-users', [App\Http\Controllers\ExportImportController::class, 'importUsers'])->name('import.users');
@@ -97,7 +101,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/send-qr', [App\Http\Controllers\QrEmailController::class, 'index'])->name('qr.index');
 
         // Reports - Top Management Only
-        Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
         Route::get('/reports/export/committees', [ReportController::class, 'exportCommittees'])->name('reports.export.committees');
         Route::get('/reports/export/members', [ReportController::class, 'exportMembers'])->name('reports.export.members');
     });
@@ -168,10 +171,10 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Reports (Top Management, Board, Committee Head) - NO HR
+    | Reports (Dynamic Access)
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['checkRole:top_management,board,committee_head'])->group(function () {
+    Route::middleware(['checkRole:top_management,board,committee_head,hr,member'])->group(function () {
         // Reports - Dashboard
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
@@ -181,8 +184,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/committee-performance', [ReportController::class, 'committeePerformance'])->name('reports.committee_performance');
         Route::get('/reports/top-performers', [ReportController::class, 'topPerformers'])->name('reports.top_performers');
         Route::get('/reports/session-quality', [ReportController::class, 'sessionQuality'])->name('reports.session_quality');
+        Route::get('/reports/session-quality/{session}', [ReportController::class, 'showSessionFeedback'])->name('reports.feedback_details');
         Route::get('/reports/attendance-trends', [ReportController::class, 'attendanceTrends'])->name('reports.attendance_trends');
-
+        Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
 
 
         // QR Image (Shared access for verification)

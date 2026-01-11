@@ -21,7 +21,7 @@ class ExportImportController extends Controller
     {
         $committees = Committee::all();
         $sessions = AttendanceSession::all();
-        return view('export_import.index', compact('committees', 'sessions'));
+        return view('Top Management.ExportImport.index', compact('committees', 'sessions'));
     }
 
     public function importUsers(Request $request)
@@ -104,7 +104,7 @@ class ExportImportController extends Controller
                 'committee_name' => $committee->name,
                 'session_name' => null
             ];
-            $htmlContent = view('emails.qr_code', ['data' => $viewData, 'qrCode' => $qrSvgString])->render();
+            $htmlContent = view('Common.Emails.qr_code', ['data' => $viewData, 'qrCode' => $qrSvgString])->render();
             file_put_contents($htmlPath, $htmlContent);
 
             // Save PDF

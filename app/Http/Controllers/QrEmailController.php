@@ -44,7 +44,7 @@ class QrEmailController extends Controller
 
         $users = $query->with('committees')->paginate(10)->withQueryString();
 
-        return view('emails.send_qr', compact('committees', 'sessions', 'users'));
+        return view('Common.Emails.send_qr', compact('committees', 'sessions', 'users'));
     }
 
     public function showImage($id)
@@ -79,6 +79,6 @@ class QrEmailController extends Controller
             'session_name' => null
         ];
 
-        return view('emails.qr_code', compact('data', 'qrCode'));
+        return view('Common.Emails.qr_code', compact('data', 'qrCode'));
     }
 }

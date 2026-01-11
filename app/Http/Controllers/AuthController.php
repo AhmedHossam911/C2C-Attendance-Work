@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         return response()
-            ->view('auth.login')
+            ->view('Common.Auth.login')
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache')
             ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
@@ -45,7 +45,7 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        return view('auth.register');
+        return view('Common.Auth.register');
     }
 
     public function register(Request $request)

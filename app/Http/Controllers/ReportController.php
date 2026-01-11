@@ -19,7 +19,7 @@ class ReportController extends Controller
         if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('board') && !Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head')) {
             abort(403);
         }
-        return view('reports.index');
+        return view('Heads.Reports.index');
     }
 
     public function committees(Request $request)
@@ -46,7 +46,7 @@ class ReportController extends Controller
 
         // Edge case: Invalid ID or empty list
         if (!$selectedCommittee) {
-            return view('reports.committees', [
+            return view('Heads.Reports.committees', [
                 'committeesList' => $committeesList,
                 'selectedCommittee' => null,
                 'members' => new LengthAwarePaginator([], 0, 12),
@@ -106,7 +106,7 @@ class ReportController extends Controller
         // Append query parameters to pagination links
         $paginatedMembers->appends($request->all());
 
-        return view('reports.committees', [
+        return view('Heads.Reports.committees', [
             'committeesList' => $committeesList,
             'selectedCommittee' => $selectedCommittee,
             'members' => $paginatedMembers,
@@ -116,9 +116,10 @@ class ReportController extends Controller
 
     public function ghostMembers(Request $request)
     {
-        // HR, Board, Top Management, Committee Head
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('board') && !Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head')) {
-            abort(403);
+        $accessLevel = \App\Models\ReportPermission::getAccessLevel('ghost_members', Auth::user()->role);
+
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_NONE) {
+            abort(403, 'Unauthorized access to Ghost Members report.');
         }
 
         // Logic: Members with 0 attendance records AND 0 task submissions
@@ -133,14 +134,13 @@ class ReportController extends Controller
             });
         }
 
-        // Apply Role Constraints
-        if (Auth::user()->hasRole('board')) {
-            // Board Global Report Access
-            $committeeIds = \App\Models\Committee::pluck('id');
-        } elseif (Auth::user()->hasRole('hr') || Auth::user()->hasRole('committee_head')) {
+        // Apply Scope Constraints
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_OWN) {
+            // Restricted to Authorized Committees
             $committeeIds = Auth::user()->authorizedCommittees->pluck('id');
             if ($committeeIds->isEmpty()) abort(403, 'No assigned committees.');
 
+            // Verify requested committee is owned
             if ($request->filled('committee_id') && !$committeeIds->contains($request->committee_id)) {
                 abort(403, 'Unauthorized access to this committee.');
             }
@@ -150,6 +150,7 @@ class ReportController extends Controller
             });
             $committees = Auth::user()->authorizedCommittees;
         } else {
+            // ACCESS_GLOBAL
             $committees = Committee::orderBy('name')->get();
         }
 
@@ -164,14 +165,15 @@ class ReportController extends Controller
 
         $ghosts = $query->with('committees')->paginate(12)->withQueryString();
 
-        return view('reports.ghost_members', compact('ghosts', 'committees'));
+        return view('Heads.Reports.ghost_members', compact('ghosts', 'committees'));
     }
 
     public function topPerformers(Request $request)
     {
-        // HR, Board, Top Management, Committee Head
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('board') && !Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head')) {
-            abort(403);
+        $accessLevel = \App\Models\ReportPermission::getAccessLevel('top_performers', Auth::user()->role);
+
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_NONE) {
+            abort(403, 'Unauthorized access to Top Performers report.');
         }
 
         // Logic: Attendance + Tasks
@@ -185,23 +187,13 @@ class ReportController extends Controller
             });
         }
 
-        // Apply Role Constraints
-        if (Auth::user()->hasRole('hr')) {
+        // Apply Scope Constraints
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_OWN) {
+            // Restricted to Authorized Committees
             $committeeIds = Auth::user()->authorizedCommittees->pluck('id');
             if ($committeeIds->isEmpty()) abort(403, 'No assigned committees.');
 
-            if ($request->filled('committee_id') && !$committeeIds->contains($request->committee_id)) {
-                abort(403, 'Unauthorized access to this committee.');
-            }
-
-            $query->whereHas('committees', function ($q) use ($committeeIds) {
-                $q->whereIn('committees.id', $committeeIds);
-            });
-            $committees = Auth::user()->authorizedCommittees;
-        } elseif (Auth::user()->hasRole('committee_head')) {
-            $committeeIds = Auth::user()->authorizedCommittees->pluck('id');
-            if ($committeeIds->isEmpty()) abort(403, 'No assigned committees.');
-
+            // Verify requested committee is owned
             if ($request->filled('committee_id') && !$committeeIds->contains($request->committee_id)) {
                 abort(403, 'Unauthorized access to this committee.');
             }
@@ -211,6 +203,7 @@ class ReportController extends Controller
             });
             $committees = Auth::user()->authorizedCommittees;
         } else {
+            // ACCESS_GLOBAL
             $committees = Committee::orderBy('name')->get();
         }
 
@@ -219,22 +212,23 @@ class ReportController extends Controller
             ->paginate(20)
             ->withQueryString(); // Use paginate instead of take/get
 
-        return view('reports.top_performers', compact('performers', 'committees'));
+        return view('Heads.Reports.top_performers', compact('performers', 'committees'));
     }
 
     public function committeePerformance()
     {
-        // HR, Board, Top Management, Committee Head
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('board') && !Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head')) {
-            abort(403);
+        $accessLevel = \App\Models\ReportPermission::getAccessLevel('committee_performance', Auth::user()->role);
+
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_NONE) {
+            abort(403, 'Unauthorized access to Committee Performance report.');
         }
 
         $committees = Committee::withCount(['users', 'sessions', 'tasks']) // Basic counts needed
             ->with(['users.attendanceRecords', 'tasks.submissions']) // Eager load for aggregation
             ->get();
 
-        // Filter for Committee Head/HR if necessary
-        if (Auth::user()->hasRole('hr') || Auth::user()->hasRole('committee_head')) {
+        // Filter Scope
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_OWN) {
             $authorizedIds = Auth::user()->authorizedCommittees->pluck('id')->toArray();
             $committees = $committees->whereIn('id', $authorizedIds);
         }
@@ -278,13 +272,13 @@ class ReportController extends Controller
             ];
         });
 
-        return view('reports.committee_performance', compact('performance'));
+        return view('Heads.Reports.committee_performance', compact('performance'));
     }
 
     public function sessionQuality(Request $request)
     {
         // Top Management & Committee Head (for their sessions)
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('committee_head')) {
+        if (!\App\Models\ReportPermission::check('session_quality', Auth::user()->role)) {
             abort(403, 'Restricted access.');
         }
 
@@ -343,13 +337,56 @@ class ReportController extends Controller
 
         $committees = Committee::orderBy('name')->get(); // For filter
 
-        return view('reports.session_quality', ['sessions' => $paginatedItems, 'committees' => $committees]);
+        return view('Heads.Reports.session_quality', ['sessions' => $paginatedItems, 'committees' => $committees]);
+    }
+
+    public function showSessionFeedback(\App\Models\AttendanceSession $session)
+    {
+        $user = Auth::user();
+
+        // 1. Role Check: Only Top Management, Board, and Head can view the LIST
+        if (!in_array($user->role, ['top_management', 'board', 'committee_head', 'vice_head'])) {
+            abort(403, 'Unauthorized. HR and Members cannot view feedback lists.');
+        }
+
+        // 2. Authorization Scope Check
+        if ($user->hasRole('top_management')) {
+            // Can view anything
+        } elseif ($user->hasRole('board') || $user->hasRole('committee_head') || $user->hasRole('vice_head')) {
+            // Must be authorized for this committee
+            if (!$user->authorizedCommittees->contains($session->committee_id)) {
+                abort(403, 'Unauthorized. You do not have access to this committee\'s feedback.');
+            }
+        }
+
+        // 3. Fetch Feedback
+        $feedbacks = $session->feedbacks()->with('user')->get();
+
+        // 4. Anonymity Logic
+        // Top Management -> See Names
+        // Board/Head -> Anonymous
+        $shouldAnonymize = !$user->hasRole('top_management');
+
+        if ($shouldAnonymize) {
+            $feedbacks->transform(function ($feedback) {
+                unset($feedback->user); // Remove relation
+                $feedback->user_name = 'Anonymous Member'; // Placeholder
+                return $feedback;
+            });
+        } else {
+            $feedbacks->transform(function ($feedback) {
+                $feedback->user_name = $feedback->user->name ?? 'Unknown';
+                return $feedback;
+            });
+        }
+
+        return view('Heads.Reports.feedback_details', compact('session', 'feedbacks', 'shouldAnonymize'));
     }
 
     public function attendanceTrends()
     {
         // Top Management & Committee Head
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('committee_head')) {
+        if (!\App\Models\ReportPermission::check('attendance_trends', Auth::user()->role)) {
             abort(403, 'Restricted access.');
         }
 
@@ -384,7 +421,7 @@ class ReportController extends Controller
             ];
         });
 
-        return view('reports.attendance_trends', compact('trends'));
+        return view('Heads.Reports.attendance_trends', compact('trends'));
     }
 
     public function exportCommittees()
@@ -396,12 +433,12 @@ class ReportController extends Controller
     public function member(Request $request)
     {
         // RESTRICTION: Top Management, Board, HR, Committee Head (for their members)
-        if (!Auth::user()->hasRole('top_management') && !Auth::user()->hasRole('board') && !Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head')) {
-            abort(403, 'Unauthorized. This report is restricted to Top Management.');
+        if (!\App\Models\ReportPermission::check('member', Auth::user()->role)) {
+            abort(403, 'Unauthorized. This report is restricted.');
         }
 
         $members = $this->getMembersData($request);
-        return view('reports.member', compact('members'));
+        return view('Top Management.Reports.member', compact('members'));
     }
 
     public function exportMembers(Request $request)
@@ -413,20 +450,24 @@ class ReportController extends Controller
     private function getCommitteesData()
     {
         $user = Auth::user();
+        $accessLevel = \App\Models\ReportPermission::getAccessLevel('committees', $user->role);
 
-        if (!$user->hasRole('top_management') && !$user->hasRole('board') && !$user->hasRole('hr') && !$user->hasRole('committee_head')) {
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_NONE) {
             abort(403, 'Unauthorized action.');
         }
 
-        if ($user->hasRole('committee_head')) {
-            // Fetch committees assigned to Head
+        if ($accessLevel === \App\Models\ReportPermission::ACCESS_OWN) {
+            // Fetch committees assigned to User (Head/HR/Member restricted)
             $committees = $user->authorizedCommittees()->with(['users.attendanceRecords'])->get();
 
             if ($committees->isEmpty()) {
-                abort(403, 'You are not assigned to any committees.');
+                // If scope is OWN but they have no committees, show empty or abort?
+                // Abort is safer to indicate "Access granted but no data found for you"
+                // But returning empty collection is more robust for UI.
+                // Let's return empty collection to accept "Authorized but no assignments"
             }
         } else {
-            // Top Management and Board fetch all
+            // ACCESS_GLOBAL: Top Management, Board (usually), or unrestricted HR
             $committees = Committee::with(['users.attendanceRecords'])->get();
         }
 
