@@ -6,76 +6,105 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    /* Fonts */
+    --font-sans: "Instrument Sans", "Inter", ui-sans-serif, system-ui,
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
 
-    /* Brand Colors */
-    --color-c2c-blue-50: #eef4ff;
-    --color-c2c-blue-100: #e0eafe;
-    --color-c2c-blue-200: #c5d7fc;
-    --color-c2c-blue-300: #a2bbf8;
-    --color-c2c-blue-400: #7a9af3;
-    --color-c2c-blue-500: #5777eb;
-    --color-c2c-blue-600: #3856dd;
-    --color-c2c-blue-700: #2b43c6;
-    --color-c2c-blue-800: #2636a0;
-    --color-c2c-blue-900: #1e3b8a; /* Base Brand Blue */
-    --color-c2c-blue-950: #192361;
+    /* C2C Brand Colors - Blue */
+    --color-c2c-blue-50: #eff6ff;
+    --color-c2c-blue-100: #dbeafe;
+    --color-c2c-blue-200: #bfdbfe;
+    --color-c2c-blue-300: #93c5fd;
+    --color-c2c-blue-400: #60a5fa;
+    --color-c2c-blue-500: #3b82f6;
+    --color-c2c-blue-600: #2563eb;
+    --color-c2c-blue-700: #1d4ed8;
+    --color-c2c-blue-800: #1e40af;
+    --color-c2c-blue-900: #1e3a8a;
+    --color-c2c-blue-950: #172554;
 
-    --color-c2c-teal-50: #effcf9;
-    --color-c2c-teal-100: #cbf9f1;
-    --color-c2c-teal-200: #9bf3e4;
-    --color-c2c-teal-300: #64e8d3;
-    --color-c2c-teal-400: #34d5bd;
-    --color-c2c-teal-500: #14b8a6; /* Base Brand Teal */
+    /* C2C Brand Colors - Teal */
+    --color-c2c-teal-50: #f0fdfa;
+    --color-c2c-teal-100: #ccfbf1;
+    --color-c2c-teal-200: #99f6e4;
+    --color-c2c-teal-300: #5eead4;
+    --color-c2c-teal-400: #2dd4bf;
+    --color-c2c-teal-500: #14b8a6;
     --color-c2c-teal-600: #0d9488;
     --color-c2c-teal-700: #0f766e;
     --color-c2c-teal-800: #115e59;
     --color-c2c-teal-900: #134e4a;
     --color-c2c-teal-950: #042f2e;
 
-    --color-c2c-gold-50: #fffbeb;
-    --color-c2c-gold-100: #fef3c7;
-    --color-c2c-gold-200: #fde68a;
-    --color-c2c-gold-300: #fcd34d;
-    --color-c2c-gold-400: #fbbf24;
-    --color-c2c-gold-500: #f59e0b;
-    --color-c2c-gold-600: #d97706;
-    --color-c2c-gold-700: #b45309;
-    --color-c2c-gold-800: #92400e;
-    --color-c2c-gold-900: #78350f;
-    --color-c2c-gold-950: #451a03;
-    --color-brand-accent: #ffc107;
-    --color-brand-surface: #f8fafc;
+    /* Semantic Colors - Soft Backgrounds */
+    --color-surface-light: #f8fafc; /* Slate-50 */
+    --color-surface-dark: #0f172a; /* Slate-900 */
+    --color-glass-border-light: rgba(255, 255, 255, 0.5);
+    --color-glass-border-dark: rgba(30, 41, 59, 0.5);
 }
 
 @layer base {
     body {
-        @apply bg-[#e2e8f0] text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased;
+        @apply bg-slate-50 text-slate-900 dark:bg-[#0b1121] dark:text-slate-100 antialiased selection:bg-c2c-teal-500 selection:text-white;
     }
 
-    /* Ensure all text has good contrast by default */
+    /* Headings */
     h1,
     h2,
     h3,
     h4,
     h5,
     h6 {
-        @apply text-slate-900 dark:text-white;
+        @apply font-bold tracking-tight text-slate-900 dark:text-white;
     }
 
-    p {
-        @apply text-slate-700 dark:text-slate-300;
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600 border-[2px] border-transparent bg-clip-content;
     }
 }
 
 @layer utilities {
+    /* Fluent / Glassmorphism */
     .glass {
-        @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/50;
+        @apply bg-white/70 dark:bg-[#0f172a]/70 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-sm;
     }
-    .card-hover {
-        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+
+    .glass-card {
+        @apply bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl;
+    }
+
+    /* Gradients */
+    .bg-gradient-brand {
+        @apply bg-gradient-to-r from-c2c-teal-600 to-c2c-blue-700;
+    }
+    .text-gradient-brand {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-c2c-teal-600 to-c2c-blue-600;
+    }
+
+    /* Animations */
+    .hover-lift {
+        @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;
+    }
+
+    /* Sidebar Utilities */
+    .sidebar-link {
+        @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 border border-transparent;
+    }
+
+    .sidebar-link-active {
+        @apply bg-c2c-blue-50 text-c2c-blue-700 dark:bg-c2c-blue-900/20 dark:text-c2c-blue-400 border-c2c-blue-200 dark:border-c2c-blue-800/50 shadow-sm;
+    }
+
+    .sidebar-link-inactive {
+        @apply text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50;
     }
 }
-

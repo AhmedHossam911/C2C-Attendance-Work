@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Users Management</h2>
@@ -13,7 +11,8 @@
 
     <!-- Search & Filter Card -->
     <x-card class="mb-6">
-        <form action="{{ route('users.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <form action="{{ route('users.index') }}" method="GET"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="sm:col-span-2 lg:col-span-1">
                 <x-input-label for="search" value="Search" class="mb-1.5" />
                 <div class="relative">
@@ -48,7 +47,8 @@
                 <x-primary-button type="submit" class="flex-1 justify-center py-2.5">
                     <i class="bi bi-funnel mr-1"></i> Filter
                 </x-primary-button>
-                <x-secondary-button href="{{ route('users.index') }}" class="justify-center py-2.5" title="Clear Filters">
+                <x-secondary-button href="{{ route('users.index') }}" class="justify-center py-2.5"
+                    title="Clear Filters">
                     <i class="bi bi-x-lg"></i>
                 </x-secondary-button>
             </div>
@@ -73,7 +73,8 @@
                                 </div>
                             </div>
                         </x-table.td>
-                        <x-table.td class="text-slate-600 dark:text-slate-400 font-medium">{{ $user->email }}</x-table.td>
+                        <x-table.td
+                            class="text-slate-600 dark:text-slate-400 font-medium">{{ $user->email }}</x-table.td>
                         <x-table.td>
                             @php
                                 $roleClasses = match ($user->role) {
@@ -125,12 +126,9 @@
                     </x-table.tr>
                 @empty
                     <x-table.tr>
-                        <x-table.td colspan="5" class="text-center py-12">
-                            <div class="flex flex-col items-center justify-center">
-                                <i class="bi bi-people text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
-                                <p class="text-slate-500 dark:text-slate-400 font-medium">No users found</p>
-                                <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Try adjusting your filters</p>
-                            </div>
+                        <x-table.td colspan="5">
+                            <x-empty-state icon="bi-people" title="No users found"
+                                message="Try adjusting your filters." />
                         </x-table.td>
                     </x-table.tr>
                 @endforelse
@@ -168,7 +166,8 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-slate-800 dark:text-white text-base">{{ $user->name }}</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[180px]">
+                                <p
+                                    class="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-[180px]">
                                     {{ $user->email }}
                                 </p>
                             </div>
@@ -212,11 +211,8 @@
                 </div>
             </x-card>
         @empty
-            <x-card class="text-center py-12 text-slate-500">
-                <i class="bi bi-people text-4xl mb-3 opacity-50 inline-block"></i>
-                <p>No users found.</p>
-                <p class="text-xs opacity-70 mt-1">Try adjusting your filters.</p>
-            </x-card>
+            <x-empty-state icon="bi-people" title="No users found" message="Try adjusting your filters."
+                class="py-12" />
         @endforelse
 
         @if ($users->hasPages())
@@ -225,4 +221,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>

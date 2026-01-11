@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">My Attendance History</h2>
@@ -68,13 +66,9 @@
                         </x-table.tr>
                     @empty
                         <x-table.tr>
-                            <x-table.td colspan="5" class="text-center py-16">
-                                <div class="flex flex-col items-center justify-center text-slate-400">
-                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-full mb-4">
-                                        <i class="bi bi-clock-history text-4xl opacity-50"></i>
-                                    </div>
-                                    <p class="font-medium text-lg text-slate-600 dark:text-slate-300">No history found</p>
-                                </div>
+                            <x-table.td colspan="5" class="p-0">
+                                <x-empty-state icon="clock-history" title="No history found"
+                                    description="You haven't attended any sessions yet." />
                             </x-table.td>
                         </x-table.tr>
                     @endforelse
@@ -94,7 +88,8 @@
                             class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 mb-2">
                             {{ $session->committee->name ?? 'General' }}
                         </span>
-                        <h3 class="font-bold text-slate-800 dark:text-white text-lg leading-snug">{{ $session->title }}</h3>
+                        <h3 class="font-bold text-slate-800 dark:text-white text-lg leading-snug">{{ $session->title }}
+                        </h3>
                         <p class="text-xs text-slate-500 mt-1.5 flex items-center gap-1.5 font-medium">
                             <i class="bi bi-calendar-event"></i>
                             {{ $session->created_at->format('M d, Y') }}
@@ -124,10 +119,8 @@
                     </div>
                 </x-card>
             @empty
-                <x-card class="text-center py-12 text-slate-500">
-                    <i class="bi bi-clock-history text-4xl mb-3 opacity-50 inline-block"></i>
-                    <p>No history found.</p>
-                </x-card>
+                <x-empty-state icon="clock-history" title="No history found"
+                    description="You haven't attended any sessions yet." />
             @endforelse
         </div>
 
@@ -138,4 +131,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>

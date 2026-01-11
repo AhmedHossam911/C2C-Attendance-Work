@@ -56,7 +56,7 @@
         <div class="flex items-center justify-between">
             <label for="remember_me" class="inline-flex items-center cursor-pointer group">
                 <input id="remember_me" type="checkbox" name="remember"
-                    class="rounded border-slate-300 text-brand-blue shadow-sm focus:ring-brand-blue/50 bg-slate-50 dark:bg-slate-800 dark:border-slate-600">
+                    class="rounded border-slate-300 text-c2c-blue-600 shadow-sm focus:ring-c2c-blue-500/50 bg-slate-50 dark:bg-slate-800 dark:border-slate-600">
                 <span
                     class="ml-2 text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">Remember
                     me</span>
@@ -64,13 +64,12 @@
 
             @if (Route::has('password.request'))
                 <a href="{{ route('password.request') }}"
-                    class="text-sm font-medium text-brand-blue hover:text-brand-teal dark:text-blue-400 dark:hover:text-teal-400 transition-colors">
+                    class="text-sm font-medium text-c2c-blue-600 hover:text-c2c-teal-600 dark:text-c2c-blue-400 dark:hover:text-c2c-teal-400 transition-colors">
                     Forgot Password?
                 </a>
             @endif
         </div>
 
-        <!-- Submit Button -->
         <!-- Submit Button -->
         <x-primary-button class="w-full justify-center py-3.5 group">
             <span class="group-hover:tracking-wider transition-all duration-300">Sign In</span>

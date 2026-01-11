@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div x-data="{
         showModal: false,
         recordId: null,
@@ -14,10 +12,7 @@
         }
     }">
         <div class="mb-6">
-            <a href="{{ route('sessions.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-brand-blue transition-colors">
-                <i class="bi bi-arrow-left"></i> Back to Sessions
-            </a>
+            <x-back-button href="{{ route('sessions.index') }}" />
         </div>
 
         <!-- Header & Actions -->
@@ -124,11 +119,13 @@
                                     <x-table.td class="text-slate-500 italic text-sm">
                                         {{ $record->notes ? Str::limit($record->notes, 30) : '-' }}
                                     </x-table.td>
-                                    <x-table.td class="text-slate-500 text-xs">{{ $record->scanner->name }}</x-table.td>
+                                    <x-table.td
+                                        class="text-slate-500 text-xs">{{ $record->scanner->name }}</x-table.td>
                                     <x-table.td class="text-slate-500 text-xs">
                                         @if ($record->updater)
                                             <div class="font-medium">{{ $record->updater->name }}</div>
-                                            <div class="text-[10px] opacity-75">{{ $record->updated_at->diffForHumans() }}
+                                            <div class="text-[10px] opacity-75">
+                                                {{ $record->updated_at->diffForHumans() }}
                                             </div>
                                         @else
                                             -
@@ -165,9 +162,8 @@
                         </x-table>
                     @else
                         <!-- No Permission / Empty State -->
-                        <div class="p-8 text-center text-slate-500">
-                            <p>You do not have permission to view the attendance list.</p>
-                        </div>
+                        <x-empty-state icon="bi-lock" title="Access Restricted"
+                            message="You do not have permission to view the attendance list." />
                     @endif
                 </div>
 
@@ -269,14 +265,12 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="p-8 text-center text-slate-500">
-                                <p>No records found.</p>
-                            </div>
+                            <x-empty-state icon="bi-people" title="No records found"
+                                message="No attendance records available." />
                         @endforelse
                     @else
-                        <div class="p-8 text-center text-slate-500">
-                            <p>No permission to view records.</p>
-                        </div>
+                        <x-empty-state icon="bi-lock" title="Access Restricted"
+                            message="You do not have permission to view records." />
                     @endif
                 </div>
 
@@ -292,13 +286,15 @@
 
         @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
             <!-- Edit Custom Modal (Alpine) -->
-            <div x-show="showModal" style="display: none;" x-cloak class="relative z-50" aria-labelledby="modal-title"
-                role="dialog" aria-modal="true">
+            <div x-show="showModal" style="display: none;" x-cloak class="relative z-50"
+                aria-labelledby="modal-title" role="dialog" aria-modal="true">
                 <!-- Backdrop -->
-                <div x-show="showModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
-                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                    class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" @click="showModal = false">
+                <div x-show="showModal" x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity"
+                    @click="showModal = false">
                 </div>
 
                 <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -396,4 +392,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>ion

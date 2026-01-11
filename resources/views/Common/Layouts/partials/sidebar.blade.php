@@ -1,20 +1,20 @@
 <!-- Sidebar -->
 <aside
-    class="hidden lg:flex fixed inset-y-0 left-0 z-50 bg-slate-300 dark:bg-[#020617] text-slate-900 dark:text-slate-200 transform transition-all duration-300 ease-in-out flex-col border-r border-slate-200 dark:border-slate-800 shadow-2xl lg:shadow-none"
+    class="hidden lg:flex fixed inset-y-0 left-0 z-50 bg-slate-50 dark:bg-[#0f172a] text-slate-900 dark:text-slate-200 transform transition-all duration-300 ease-in-out flex-col border-r border-slate-200 dark:border-slate-800 shadow-2xl lg:shadow-none"
     :class="[
         sidebarCollapsed ? 'lg:w-20' : 'lg:w-72',
     ]">
 
     <!-- Toggle Handle -->
     <div @click="sidebarCollapsed = !sidebarCollapsed"
-        class="hidden lg:flex absolute -right-3 top-20 w-3 h-12 bg-slate-300 dark:bg-[#020617] border border-l-0 border-slate-200 dark:border-slate-800 rounded-r-md cursor-pointer items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-900 transition-all shadow-sm group z-50"
+        class="hidden lg:flex absolute -right-3 top-20 w-3 h-12 bg-white dark:bg-[#0f172a] border border-l-0 border-slate-200 dark:border-slate-800 rounded-r-md cursor-pointer items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group z-50"
         title="Toggle Sidebar">
         <div class="w-0.5 h-6 rounded-full bg-slate-300 dark:bg-slate-600 group-hover:bg-brand-teal transition-colors">
         </div>
     </div>
 
     <!-- Logo Section -->
-    <div class="h-16 flex items-center border-b border-slate-200 dark:border-slate-800 bg-slate-300 dark:bg-[#020617] relative overflow-hidden transition-all shrink-0"
+    <div class="h-16 flex items-center border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a] relative overflow-hidden transition-all shrink-0"
         :class="sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-6'">
 
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group relative z-10">
@@ -291,7 +291,7 @@
 
     <!-- User Profile Footer -->
     @auth
-        <div class="border-t border-slate-200 dark:border-slate-800 bg-slate-300 dark:bg-[#020617] relative transition-all duration-300 shrink-0"
+        <div class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0f172a] relative transition-all duration-300 shrink-0"
             :class="sidebarCollapsed ? 'p-2' : 'p-4'">
 
             <!-- Collapsed: Logout Only -->

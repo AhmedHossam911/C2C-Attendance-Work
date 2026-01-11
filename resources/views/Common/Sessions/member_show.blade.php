@@ -1,13 +1,8 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-2xl mx-auto px-4 py-8">
         {{-- Back Link --}}
         <div class="mb-6">
-            <a href="{{ route('sessions.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-brand-blue transition-colors">
-                <i class="bi bi-arrow-left"></i> Back to Sessions
-            </a>
+            <x-back-button href="{{ route('sessions.index') }}" />
         </div>
 
         {{-- Logic --}}
@@ -37,7 +32,8 @@
                         <i
                             class="bi bi-{{ $myRecord->status === 'present' ? 'check-lg' : ($myRecord->status === 'late' ? 'exclamation-lg' : 'x-lg') }}"></i>
                     </div>
-                    <h4 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">{{ ucfirst($myRecord->status) }}</h4>
+                    <h4 class="text-2xl font-bold text-slate-900 dark:text-white mb-1">{{ ucfirst($myRecord->status) }}
+                    </h4>
                 </div>
             @else
                 <div class="flex flex-col items-center py-2">
@@ -119,7 +115,8 @@
                             <i class="bi bi-file-earmark-check-fill"></i>
                         </div>
                         <h3 class="font-bold text-slate-900 dark:text-white mb-1">Feedback Submitted</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">This is a read-only copy of your response.</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">This is a read-only copy of your response.
+                        </p>
                     </div>
                 @endif
 
@@ -146,8 +143,9 @@
                                 <div
                                     class="flex flex-row-reverse justify-end gap-2 group/stars {{ $readOnly ? 'pointer-events-none' : '' }}">
                                     @for ($i = 5; $i >= 1; $i--)
-                                        <input type="radio" id="obj_star_{{ $i }}" name="objectives_clarity"
-                                            value="{{ $i }}" class="peer sr-only" required
+                                        <input type="radio" id="obj_star_{{ $i }}"
+                                            name="objectives_clarity" value="{{ $i }}" class="peer sr-only"
+                                            required
                                             {{ $userFeedback && $userFeedback->objectives_clarity == $i ? 'checked' : '' }}>
                                         <label for="obj_star_{{ $i }}"
                                             class="text-3xl transition-colors cursor-pointer
@@ -223,8 +221,9 @@
                                             $isMuted = $readOnly && !$isSelected;
                                         @endphp
                                         <label class="cursor-pointer {{ $isMuted ? 'opacity-30 scale-90' : '' }}">
-                                            <input type="radio" name="overall_satisfaction" value="{{ $i }}"
-                                                class="peer sr-only" required {{ $isSelected ? 'checked' : '' }}>
+                                            <input type="radio" name="overall_satisfaction"
+                                                value="{{ $i }}" class="peer sr-only" required
+                                                {{ $isSelected ? 'checked' : '' }}>
                                             <div
                                                 class="aspect-square flex items-center justify-center rounded-xl border text-xs font-bold transition-all
                                                 {{ $readOnly
@@ -281,7 +280,8 @@
                                                 $userFeedback && $userFeedback->room_suitability == $opt['val'];
                                             $isMuted = $readOnly && !$isSelected;
                                         @endphp
-                                        <label class="cursor-pointer group {{ $isMuted ? 'opacity-40 grayscale' : '' }}">
+                                        <label
+                                            class="cursor-pointer group {{ $isMuted ? 'opacity-40 grayscale' : '' }}">
                                             <input type="radio" name="room_suitability" value="{{ $opt['val'] }}"
                                                 class="peer sr-only" required {{ $isSelected ? 'checked' : '' }}>
                                             <div
@@ -424,4 +424,4 @@
             @endif
         @endif
     </div>
-@endsection
+</x-app-layout>ion

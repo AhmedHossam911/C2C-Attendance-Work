@@ -1,17 +1,14 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h2 class="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Tasks</h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1">Manage and track your committee assignments.</p>
         </div>
         @can('create', App\Models\Task::class)
-            <a href="{{ route('tasks.create') }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-blue text-white rounded-xl font-bold hover:bg-brand-blue/90 shadow-md transition-all transform hover:-translate-y-0.5">
-                <i class="bi bi-plus-lg text-lg"></i>
+            <x-primary-button href="{{ route('tasks.create') }}">
+                <i class="bi bi-plus-lg text-lg mr-2"></i>
                 <span>New Task</span>
-            </a>
+            </x-primary-button>
         @endcan
     </div>
 
@@ -89,14 +86,16 @@
                         {{-- Pending Tasks Card --}}
                         <div
                             class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col h-full">
-                            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+                            <div
+                                class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                 <div
                                     class="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 flex items-center justify-center">
                                     <i class="bi bi-hourglass-split"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-800 dark:text-white text-lg">Pending Tasks</h4>
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Action Required</p>
+                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Action Required
+                                    </p>
                                 </div>
                             </div>
 
@@ -133,10 +132,8 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="text-center py-8 text-slate-400">
-                                        <i class="bi bi-check2-circle text-4xl mb-2 opacity-50 block"></i>
-                                        <p class="text-sm">All caught up! No pending tasks.</p>
-                                    </div>
+                                    <x-empty-state icon="bi-check2-circle" message="All caught up! No pending tasks."
+                                        class="py-8" />
                                 @endforelse
                             </div>
                         </div>
@@ -144,14 +141,16 @@
                         {{-- Submitted Tasks Card --}}
                         <div
                             class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col h-full">
-                            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+                            <div
+                                class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                 <div
                                     class="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center">
                                     <i class="bi bi-check-lg"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-800 dark:text-white text-lg">Submitted Tasks</h4>
-                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">History & Status
+                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">History &
+                                        Status
                                     </p>
                                 </div>
                             </div>
@@ -173,7 +172,8 @@
                                                     {{ $task->title }}
                                                 </h5>
                                                 <div class="flex items-center gap-2 text-xs text-slate-500">
-                                                    <span>Submitted {{ $submission->submitted_at->format('M d') }}</span>
+                                                    <span>Submitted
+                                                        {{ $submission->submitted_at->format('M d') }}</span>
                                                     @if ($submission->status == 'reviewed')
                                                         <span
                                                             class="px-1.5 py-0.5 rounded bg-green-100 text-green-700 text-[10px] font-bold uppercase">
@@ -194,10 +194,8 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="text-center py-8 text-slate-400">
-                                        <i class="bi bi-clipboard-x text-4xl mb-2 opacity-50 block"></i>
-                                        <p class="text-sm">No submitted tasks yet.</p>
-                                    </div>
+                                    <x-empty-state icon="bi-clipboard-x" message="No submitted tasks yet."
+                                        class="py-8" />
                                 @endforelse
                             </div>
                         </div>
@@ -311,23 +309,15 @@
                                 </div>
                             </div>
                         @empty
-                            <div
-                                class="py-16 text-center bg-slate-300 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-700">
-                                <div
-                                    class="w-20 h-20 bg-slate-200 dark:bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                                    <i class="bi bi-inbox text-4xl"></i>
-                                </div>
-                                <h4 class="text-xl font-bold text-slate-700 dark:text-slate-300">No tasks found</h4>
-                                <p class="text-slate-500 dark:text-slate-500 mt-2">There are no tasks available for this
-                                    committee yet.</p>
-
+                            <x-empty-state icon="bi-inbox" title="No tasks found"
+                                message="There are no tasks available for this committee yet."
+                                class="py-16 bg-slate-300 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-700">
                                 @can('create', App\Models\Task::class)
-                                    <a href="{{ route('tasks.create') }}"
-                                        class="inline-flex items-center gap-2 mt-6 px-6 py-2.5 bg-brand-blue text-white rounded-xl font-bold hover:bg-brand-blue/90 transition-colors">
-                                        <i class="bi bi-plus-lg"></i> Create First Task
-                                    </a>
+                                    <x-primary-button href="{{ route('tasks.create') }}" class="mt-4">
+                                        <i class="bi bi-plus-lg mr-2"></i> Create First Task
+                                    </x-primary-button>
                                 @endcan
-                            </div>
+                            </x-empty-state>
                         @endforelse
                     </div>
                 @endif
@@ -356,7 +346,8 @@
                 </div>
                 <h3 class="text-3xl font-bold text-slate-800 dark:text-white mb-3">Select a Committee</h3>
                 <p class="text-lg text-slate-500 dark:text-slate-400 max-w-lg mx-auto leading-relaxed mb-8">
-                    Choose a committee from the top navigation bar to access its tasks, submissions, and management tools.
+                    Choose a committee from the top navigation bar to access its tasks, submissions, and management
+                    tools.
                 </p>
                 <div class="flex flex-wrap justify-center gap-2 max-w-2xl">
                     @foreach ($committees->take(5) as $committee)
@@ -369,4 +360,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>

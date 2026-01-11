@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Attendance Sessions</h2>
@@ -60,7 +58,8 @@
                         class="w-full" />
                 </div>
                 <div class="flex items-end gap-3">
-                    <x-primary-button type="submit" class="flex-1 justify-center py-2.5 shadow-md shadow-brand-blue/10">
+                    <x-primary-button type="submit"
+                        class="flex-1 justify-center py-2.5 shadow-md shadow-brand-blue/10">
                         <i class="bi bi-search"></i>
                     </x-primary-button>
                     <x-secondary-button href="{{ route('sessions.index') }}" class="flex-1 justify-center py-2.5">
@@ -158,13 +157,9 @@
                         </x-table.tr>
                     @empty
                         <x-table.tr>
-                            <x-table.td colspan="8" class="text-center py-16">
-                                <div class="flex flex-col items-center justify-center text-slate-400">
-                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-full mb-4">
-                                        <i class="bi bi-calendar-x text-4xl opacity-50"></i>
-                                    </div>
-                                    <p class="font-medium text-lg text-slate-600 dark:text-slate-300">No sessions found</p>
-                                </div>
+                            <x-table.td colspan="8">
+                                <x-empty-state icon="bi-calendar-x" title="No sessions found"
+                                    message="Try creating a new session." />
                             </x-table.td>
                         </x-table.tr>
                     @endforelse
@@ -200,7 +195,8 @@
                     <div
                         class="flex items-center justify-between gap-4 py-3 border-t border-slate-100 dark:border-slate-800 mb-4">
                         <div class="flex flex-col gap-0.5">
-                            <span class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Attendance</span>
+                            <span
+                                class="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Attendance</span>
                             <div class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200">
                                 <i class="bi bi-people-fill text-brand-blue"></i> {{ $session->records_count }}
                             </div>
@@ -241,10 +237,8 @@
                     </div>
                 </x-card>
             @empty
-                <x-card class="text-center py-12 text-slate-500">
-                    <i class="bi bi-calendar-x text-4xl mb-3 opacity-50 inline-block"></i>
-                    <p>No sessions found.</p>
-                </x-card>
+                <x-empty-state icon="bi-calendar-x" title="No sessions found" message="No sessions available."
+                    class="py-12" />
             @endforelse
         </div>
 
@@ -254,4 +248,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>

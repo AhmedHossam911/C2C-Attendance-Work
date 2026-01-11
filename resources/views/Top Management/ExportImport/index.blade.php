@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Data Management</h2>
@@ -44,7 +42,8 @@
                             required>
                     </div>
                     @error('file')
-                        <p class="text-red-500 text-xs mt-1.5 flex items-center gap-1"><i class="bi bi-exclamation-circle"></i>
+                        <p class="text-red-500 text-xs mt-1.5 flex items-center gap-1"><i
+                                class="bi bi-exclamation-circle"></i>
                             {{ $message }}</p>
                     @enderror
                 </div>
@@ -140,9 +139,10 @@
                 <i class="bi bi-exclamation-triangle text-amber-600 dark:text-amber-400"></i>
             </div>
             <div class="text-amber-800 dark:text-amber-300 text-sm">
-                <strong>Note:</strong> Importing users will create new accounts. Existing users with the same email will be
+                <strong>Note:</strong> Importing users will create new accounts. Existing users with the same email will
+                be
                 skipped. Make sure to review the data before importing.
             </div>
         </div>
     </div>
-@endsection
+</x-app-layout>

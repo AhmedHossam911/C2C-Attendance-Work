@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full" x-data="{
+    sidebarOpen: false,
+    sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+    darkMode: localStorage.getItem('theme') === 'dark'
+}"
+    :class="{ 'dark': darkMode }" x-init="$watch('darkMode', val => localStorage.setItem('theme', val ? 'dark' : 'light'));
+    $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))">
 
 <head>
     <meta charset="utf-8">
@@ -71,10 +77,20 @@
             }
         }
     </script>
+
     <style type="text/tailwindcss">
         @layer base {
             body {
                 @apply bg-slate-100 text-slate-800 dark:bg-[#0b1121] dark:text-slate-100 antialiased;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                @apply font-bold tracking-tight text-slate-900 dark:text-white;
             }
 
             /* Custom Scrollbar */
@@ -100,66 +116,65 @@
             .glass-card {
                 @apply bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl;
             }
+
+            .hover-lift {
+                @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;
+            }
+
+            .sidebar-link {
+                @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 border border-transparent;
+            }
+
+            .sidebar-link-active {
+                @apply bg-c2c-blue-50 text-c2c-blue-700 dark:bg-c2c-blue-900/20 dark:text-c2c-blue-400 border-c2c-blue-200 dark:border-c2c-blue-800/50 shadow-sm;
+            }
+
+            .sidebar-link-inactive {
+                @apply text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50;
+            }
         }
 
         [x-cloak] {
             display: none !important;
         }
     </style>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- HTML5-QRCode -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 
 <body
-    class="font-sans antialiased h-full bg-slate-100 dark:bg-[#0b1121] text-slate-800 dark:text-slate-100 relative overflow-hidden transition-colors duration-300">
+    class="font-sans antialiased h-full bg-slate-100 dark:bg-[#0b1121] text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- Background Decor -->
-    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-c2c-blue-500/10 blur-3xl"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-c2c-teal-500/10 blur-3xl"></div>
-    </div>
+    <div class="min-h-screen flex flex-col">
 
-    <div class="min-h-screen flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-md">
-            <!-- Main Content -->
-            <div
-                class="glass-card shadow-2xl shadow-c2c-blue-500/10 dark:shadow-none overflow-hidden transition-all duration-300">
+        @include('Common.Layouts.partials.sidebar')
 
-                <!-- Full Width Theme Toggle -->
-                <button
-                    onclick="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')"
-                    class="w-full py-3 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700 flex items-center justify-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-400 font-medium text-sm group">
-                    <i class="bi bi-moon-stars-fill dark:hidden group-hover:text-c2c-blue-600 transition-colors"></i>
-                    <i class="bi bi-sun-fill hidden dark:block group-hover:text-yellow-400 transition-colors"></i>
-                    <span class="dark:hidden">Switch to Dark Mode</span>
-                    <span class="hidden dark:inline">Switch to Light Mode</span>
-                </button>
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col min-w-0 transition-all duration-300 min-h-screen"
+            :class="sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'">
 
-                <div class="p-8">
-                    @if (session('status'))
-                        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+            @include('Common.Layouts.partials.topbar')
 
-                    @yield('content')
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 md:p-8 w-full max-w-[1600px] mx-auto pb-8 lg:pb-0">
+                <div class="space-y-6">
+                    {{ $slot }}
                 </div>
-            </div>
+            </main>
 
-            <!-- Footer -->
-            <p class="mt-8 text-center text-xs text-slate-400 dark:text-slate-600">
-                &copy; {{ date('Y') }} C2C Attendance System
-            </p>
+            <!-- Spacer for Fixed Footer (Desktop Only) -->
+            <div class="hidden lg:block h-32 w-full"></div>
+
+            @include('Common.Layouts.partials.footer')
         </div>
     </div>
 
-    <script>
-        // Init Theme
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia(
-                '(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    </script>
+    <x-toast />
+    {{ $scripts ?? '' }}
 </body>
 
 </html>

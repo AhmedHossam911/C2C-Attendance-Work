@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     @php
         // Members and HR are viewers here. HR might be read-only if not in committee.
         $isReadOnly = Auth::user()->role === 'hr' && !Auth::user()->committees->contains($task->committee_id);
@@ -153,7 +151,8 @@
                                                         class="text-sm text-green-700 dark:text-green-300/80 leading-relaxed">
                                                         {{ $mySubmission->feedback }}</p>
                                                 @else
-                                                    <p class="text-sm text-green-600/60 italic">No text feedback provided.
+                                                    <p class="text-sm text-green-600/60 italic">No text feedback
+                                                        provided.
                                                     </p>
                                                 @endif
                                             </div>
@@ -200,7 +199,8 @@
                                                     class="bi bi-link-45deg text-slate-400 group-focus-within/input:text-brand-blue text-2xl transition-colors"></i>
                                             </div>
                                             <input type="url" name="submission_link" id="submission_link"
-                                                placeholder="Paste your link here (e.g., Google Drive, GitHub)..." required
+                                                placeholder="Paste your link here (e.g., Google Drive, GitHub)..."
+                                                required
                                                 class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-medium focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all placeholder:text-slate-400"
                                                 value="">
                                         </div>
@@ -235,7 +235,8 @@
             <div class="space-y-6">
 
                 {{-- Meta Card --}}
-                <div class="bg-slate-300 dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div
+                    class="bg-slate-300 dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
                     <h4
                         class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
                         Details</h4>
@@ -265,4 +266,4 @@
         </div>
 
     </div>
-@endsection
+</x-app-layout>ion

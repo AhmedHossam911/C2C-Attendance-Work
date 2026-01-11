@@ -1,13 +1,8 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-2xl mx-auto">
         {{-- Back Link --}}
-        <div class="mb-4">
-            <a href="{{ route('users.index') }}"
-                class="inline-flex items-center text-sm text-slate-500 hover:text-brand-blue transition-colors">
-                <i class="bi bi-arrow-left mr-2"></i> Back to Users
-            </a>
+        <div class="mb-6">
+            <x-back-button href="{{ route('users.index') }}" />
         </div>
 
         <x-card>
@@ -75,7 +70,8 @@
                             <option value="member" {{ old('role', $user->role) == 'member' ? 'selected' : '' }}>Member
                             </option>
                             <option value="committee_head"
-                                {{ old('role', $user->role) == 'committee_head' ? 'selected' : '' }}>Committee Head</option>
+                                {{ old('role', $user->role) == 'committee_head' ? 'selected' : '' }}>Committee Head
+                            </option>
                             <option value="hr" {{ old('role', $user->role) == 'hr' ? 'selected' : '' }}>HR</option>
                             <option value="board" {{ old('role', $user->role) == 'board' ? 'selected' : '' }}>Board
                             </option>
@@ -88,11 +84,13 @@
                     <div>
                         <x-input-label for="status" icon="bi-toggle-on">Status</x-input-label>
                         <x-select-input name="status" id="status" class="w-full mt-1" required>
-                            <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>Active
+                            <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>
+                                Active
                             </option>
                             <option value="pending" {{ old('status', $user->status) == 'pending' ? 'selected' : '' }}>
                                 Pending</option>
-                            <option value="disabled" {{ old('status', $user->status) == 'disabled' ? 'selected' : '' }}>
+                            <option value="disabled"
+                                {{ old('status', $user->status) == 'disabled' ? 'selected' : '' }}>
                                 Disabled</option>
                         </x-select-input>
                         <x-input-error :messages="$errors->get('status')" class="mt-1.5" />
@@ -101,7 +99,8 @@
 
                 {{-- Actions --}}
                 <div class="pt-4 flex flex-col sm:flex-row gap-3">
-                    <x-secondary-button href="{{ route('users.index') }}" class="flex-1 justify-center py-2.5 text-center">
+                    <x-secondary-button href="{{ route('users.index') }}"
+                        class="flex-1 justify-center py-2.5 text-center">
                         Cancel
                     </x-secondary-button>
                     <x-primary-button class="flex-1 justify-center py-2.5">
@@ -116,7 +115,8 @@
             <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
                 <i class="bi bi-info-circle"></i>
                 <div>
-                    <span>User ID: <strong class="text-slate-700 dark:text-slate-300">{{ $user->id }}</strong></span>
+                    <span>User ID: <strong
+                            class="text-slate-700 dark:text-slate-300">{{ $user->id }}</strong></span>
                     <span class="mx-2">•</span>
                     <span>Created: <strong
                             class="text-slate-700 dark:text-slate-300">{{ $user->created_at->format('M d, Y') }}</strong></span>
@@ -124,4 +124,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-app-layout>

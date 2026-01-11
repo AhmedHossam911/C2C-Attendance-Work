@@ -1,7 +1,6 @@
 @props(['header' => null, 'footer' => null, 'embedded' => false])
 
-<div
-    {{ $attributes->merge(['class' => 'bg-white dark:bg-slate-800 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden']) }}>
+<div {{ $attributes->merge(['class' => 'glass-card overflow-hidden']) }}>
     @if ($header)
         <div
             class="px-6 py-4 border-b border-slate-100 dark:border-slate-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/50">

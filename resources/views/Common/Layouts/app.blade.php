@@ -18,13 +18,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS CDN (Restored for reliability) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -32,43 +32,93 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Instrument Sans', 'sans-serif'],
+                        sans: ['Instrument Sans', 'Inter', 'sans-serif'],
                     },
                     colors: {
                         brand: {
                             blue: '#1e3a8a',
-                            /* Brand Blue */
                             teal: '#14b8a6',
-                            /* Brand Teal */
-                            gold: '#FFC107',
-                            /* Gold/Yellow from original */
-                            dark: '#0F172A',
                         },
-                        // Expanded palette based on brand
+                        // New C2C Palette
                         'c2c-blue': {
-                            50: '#eef4ff',
-                            100: '#e0eafe',
-                            200: '#c5d7fc',
-                            300: '#a2bbf8',
-                            400: '#7a9af3',
-                            500: '#5777eb',
-                            49: '#5777eb', // Typo fix in previous palette if any
-                            600: '#3856dd',
-                            700: '#2b43c6',
-                            800: '#2636a0',
-                            900: '#1E3B8A',
-                            /* Adjusted to match brand */
-                            950: '#111827',
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
                         },
+                        'c2c-teal': {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-brand': 'linear-gradient(to right, #0d9488, #1d4ed8)', // teal-600 to blue-700
+                    },
+                    boxShadow: {
+                        'glass': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                     }
                 }
             }
         }
     </script>
+
     <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-slate-100 text-slate-800 dark:bg-[#0b1121] dark:text-slate-100 antialiased;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                @apply font-bold tracking-tight text-slate-900 dark:text-white;
+            }
+
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600 border-2 border-transparent bg-clip-content;
+            }
+        }
+
         @layer utilities {
             .glass {
-                @apply bg-slate-200/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-slate-200/50 dark:border-gray-800/50;
+                @apply bg-white/70 dark:bg-[#0f172a]/70 backdrop-blur-xl border border-white/40 dark:border-slate-700/50 shadow-sm;
+            }
+
+            .glass-card {
+                @apply bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl;
+            }
+
+            .hover-lift {
+                @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;
             }
 
             .sidebar-link {
@@ -76,58 +126,16 @@
             }
 
             .sidebar-link-active {
-                @apply bg-brand-blue/10 text-brand-blue border-brand-blue/20 shadow-sm;
+                @apply bg-c2c-blue-50 text-c2c-blue-700 dark:bg-c2c-blue-900/20 dark:text-c2c-blue-400 border-c2c-blue-200 dark:border-c2c-blue-800/50 shadow-sm;
             }
 
             .sidebar-link-inactive {
-                @apply text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800/50;
-            }
-
-            .animate-fade-in-up {
-                animation: fadeInUp 0.5s ease-out forwards;
-            }
-
-            .animation-delay-100 {
-                animation-delay: 100ms;
-            }
-
-            .animation-delay-200 {
-                animation-delay: 200ms;
-            }
-
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                @apply text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50;
             }
         }
 
         [x-cloak] {
             display: none !important;
-        }
-
-        /* Scrollbar customization for webkit */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        .dark ::-webkit-scrollbar-thumb {
-            background: #374151;
         }
     </style>
 
@@ -139,7 +147,7 @@
 </head>
 
 <body
-    class="font-sans antialiased h-full bg-[#e2e8f0] dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    class="font-sans antialiased h-full bg-slate-100 dark:bg-[#0b1121] text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
     <div class="min-h-screen flex flex-col">
 

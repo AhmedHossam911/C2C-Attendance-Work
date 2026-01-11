@@ -1,16 +1,16 @@
 <header
-    class="h-16 px-6 sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/60 bg-slate-300 dark:bg-[#020617] transition-colors duration-300">
+    class="h-16 px-6 sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/60 bg-slate-50/90 dark:bg-[#0f172a]/90 backdrop-blur-md transition-colors duration-300">
     <!-- Brand (Visible on Mobile & Desktop) -->
     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
         <img src="{{ asset('logo-color.png') }}" alt="Logo"
             class="h-8 w-auto lg:hidden group-hover:scale-105 transition-transform bg-white rounded p-0.5">
         <div class="flex flex-col">
             <h1
-                class="text-sm md:text-lg font-bold text-slate-800 dark:text-slate-100 leading-none group-hover:text-brand-teal transition-colors">
+                class="text-sm md:text-lg font-bold text-slate-800 dark:text-slate-100 leading-none group-hover:text-c2c-teal-600 transition-colors">
                 C2C Management System
             </h1>
             <p
-                class="hidden md:block text-xs text-slate-500 dark:text-slate-400 mt-1 group-hover:text-brand-blue dark:group-hover:text-blue-400 transition-colors">
+                class="hidden md:block text-xs text-slate-500 dark:text-slate-400 mt-1 group-hover:text-c2c-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 Academic Year
                 {{ date('Y') }}-{{ date('Y') + 1 }}</p>
         </div>
@@ -21,7 +21,7 @@
         <!-- Date Badge -->
         <div
             class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
-            <i class="bi bi-calendar4-week text-brand-teal"></i>
+            <i class="bi bi-calendar4-week text-c2c-teal-600"></i>
             <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">{{ now()->format('D, M d') }}</span>
         </div>
 
@@ -29,7 +29,7 @@
         @auth
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
-                    class="relative p-2 text-slate-500 hover:text-brand-teal hover:bg-brand-teal/10 rounded-full transition-all focus:outline-none w-10 h-10 flex items-center justify-center">
+                    class="relative p-2 text-slate-500 hover:text-c2c-teal-600 hover:bg-c2c-teal-50 dark:hover:bg-teal-900/20 rounded-full transition-all focus:outline-none w-10 h-10 flex items-center justify-center">
                     <i class="bi bi-bell text-lg"></i>
                     @if (Auth::user()->unreadNotifications->count() > 0)
                         <span
@@ -44,7 +44,7 @@
                         class="p-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
                         <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">Notifications</span>
                         <a href="{{ route('notifications.index') }}"
-                            class="text-xs text-brand-blue hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">View
+                            class="text-xs text-c2c-blue-600 hover:text-blue-700 dark:hover:text-blue-400 font-medium transition-colors">View
                             All</a>
                     </div>
                     <div class="max-h-[60vh] md:max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
@@ -79,7 +79,7 @@
                             <form action="{{ route('notifications.readAll') }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                    class="text-xs text-slate-500 hover:text-brand-blue dark:text-slate-400 dark:hover:text-blue-400 transition-colors font-medium w-full py-1">
+                                    class="text-xs text-slate-500 hover:text-c2c-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors font-medium w-full py-1">
                                     Mark all as read
                                 </button>
                             </form>
@@ -91,7 +91,7 @@
 
         <!-- Theme Toggle -->
         <button @click="darkMode = !darkMode"
-            class="p-2 text-slate-500 hover:text-brand-gold hover:bg-brand-gold/10 rounded-full transition-all focus:outline-none w-10 h-10 flex items-center justify-center">
+            class="p-2 text-slate-500 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-full transition-all focus:outline-none w-10 h-10 flex items-center justify-center">
             <i class="bi text-lg transition-transform duration-500 rotate-0 dark:rotate-180"
                 :class="darkMode ? 'bi-sun-fill' : 'bi-moon-stars-fill'"></i>
         </button>
@@ -108,7 +108,7 @@
         x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2" @click.away="sidebarOpen = false"
-        class="absolute top-16 left-0 w-full bg-slate-300 dark:bg-[#020617] border-b border-slate-200 dark:border-slate-800 shadow-xl lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto z-40">
+        class="absolute top-16 left-0 w-full bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-slate-800 shadow-xl lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto z-40">
         @include('Common.Layouts.partials.mobile-nav')
     </div>
 </header>

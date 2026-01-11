@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     @php
         $isReadOnly = Auth::user()->role === 'top_management' || Auth::user()->role === 'board';
     @endphp
@@ -294,7 +292,8 @@
             <div class="space-y-6">
 
                 {{-- Meta Card --}}
-                <div class="bg-slate-300 dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
+                <div
+                    class="bg-slate-300 dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700">
                     <h4
                         class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
                         Details</h4>
@@ -355,4 +354,4 @@
         </div>
 
     </div>
-@endsection
+</x-app-layout>ion

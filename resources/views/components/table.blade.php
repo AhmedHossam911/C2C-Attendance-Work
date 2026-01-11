@@ -21,7 +21,7 @@
             </thead>
         @endif
 
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-slate-50 dark:bg-slate-900">
             {{ $slot }}
         </tbody>
     </table>

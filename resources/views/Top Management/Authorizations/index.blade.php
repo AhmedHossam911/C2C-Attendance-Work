@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Committee Authorizations</h2>
@@ -144,16 +142,9 @@
                             </x-table.tr>
                         @empty
                             <x-table.tr>
-                                <x-table.td colspan="6" class="px-6 py-16 text-center">
-                                    <div class="flex flex-col items-center">
-                                        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-full mb-3">
-                                            <i class="bi bi-shield-slash text-3xl text-slate-300"></i>
-                                        </div>
-                                        <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">No active
-                                            authorizations</p>
-                                        <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">Grant access to HR users
-                                            using the form above.</p>
-                                    </div>
+                                <x-table.td colspan="6" class="p-0">
+                                    <x-empty-state icon="shield-slash" title="No active authorizations"
+                                        description="Grant access to HR users using the form above." />
                                 </x-table.td>
                             </x-table.tr>
                         @endforelse
@@ -162,34 +153,7 @@
                     @if ($authorizations->hasPages())
                         <div
                             class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-                            <div class="flex items-center justify-between">
-                                <div class="hidden sm:block text-sm text-slate-500 dark:text-slate-400">
-                                    Showing <span
-                                        class="font-bold text-slate-700 dark:text-slate-200">{{ $authorizations->firstItem() }}</span>
-                                    to <span
-                                        class="font-bold text-slate-700 dark:text-slate-200">{{ $authorizations->lastItem() }}</span>
-                                    of <span
-                                        class="font-bold text-slate-700 dark:text-slate-200">{{ $authorizations->total() }}</span>
-                                </div>
-                                <div class="flex gap-2 mx-auto sm:mx-0">
-                                    <a href="{{ $authorizations->previousPageUrl() }}"
-                                        class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors {{ $authorizations->onFirstPage() ? 'pointer-events-none opacity-50' : '' }}">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </a>
-
-                                    @foreach ($authorizations->getUrlRange(max(1, $authorizations->currentPage() - 1), min($authorizations->lastPage(), $authorizations->currentPage() + 1)) as $page => $url)
-                                        <a href="{{ $url }}"
-                                            class="px-3.5 py-2 rounded-lg text-sm font-bold border {{ $page == $authorizations->currentPage() ? 'bg-brand-blue border-brand-blue text-white shadow-md shadow-brand-blue/20' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                            {{ $page }}
-                                        </a>
-                                    @endforeach
-
-                                    <a href="{{ $authorizations->nextPageUrl() }}"
-                                        class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors {{ !$authorizations->hasMorePages() ? 'pointer-events-none opacity-50' : '' }}">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </div>
-                            </div>
+                            {{ $authorizations->links() }}
                         </div>
                     @endif
                 </x-card>
@@ -215,7 +179,8 @@
                                         class="h-12 w-12 rounded-xl bg-gradient-to-br from-brand-blue to-brand-teal flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-brand-blue/20">
                                         {{ substr($auth->user->name, 0, 1) }}
                                     </div>
-                                    <div class="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 p-0.5 rounded-lg">
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 p-0.5 rounded-lg">
                                         <div
                                             class="bg-green-500 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-slate-800">
                                         </div>
@@ -248,7 +213,8 @@
                         <!-- Body: Committee Info -->
                         <div
                             class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 mb-4 border border-slate-100 dark:border-slate-700/50">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Authorized For
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Authorized
+                                For
                             </p>
                             <div class="flex items-center gap-2 text-brand-blue font-bold">
                                 <i class="bi bi-people-fill"></i>
@@ -275,40 +241,16 @@
                         </div>
                     </x-card>
                 @empty
-                    <x-card class="text-center py-10 border-dashed border-2">
-                        <div class="flex flex-col items-center">
-                            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-full mb-3">
-                                <i class="bi bi-shield-plus text-3xl text-slate-300"></i>
-                            </div>
-                            <p class="text-slate-500 dark:text-slate-400 font-medium">No active authorizations</p>
-                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">Use the grant form to add access</p>
-                        </div>
-                    </x-card>
+                    <x-empty-state icon="shield-plus" title="No active authorizations"
+                        description="Use the grant form to add access." />
                 @endforelse
 
                 @if ($authorizations->hasPages())
                     <div class="mt-4 flex justify-center">
-                        <div class="flex gap-2">
-                            <a href="{{ $authorizations->previousPageUrl() }}"
-                                class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors {{ $authorizations->onFirstPage() ? 'pointer-events-none opacity-50' : '' }}">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-
-                            @foreach ($authorizations->getUrlRange(max(1, $authorizations->currentPage() - 1), min($authorizations->lastPage(), $authorizations->currentPage() + 1)) as $page => $url)
-                                <a href="{{ $url }}"
-                                    class="px-3.5 py-2 rounded-lg text-sm font-bold border {{ $page == $authorizations->currentPage() ? 'bg-brand-blue border-brand-blue text-white shadow-md shadow-brand-blue/20' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                    {{ $page }}
-                                </a>
-                            @endforeach
-
-                            <a href="{{ $authorizations->nextPageUrl() }}"
-                                class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors {{ !$authorizations->hasMorePages() ? 'pointer-events-none opacity-50' : '' }}">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </div>
+                        {{ $authorizations->links() }}
                     </div>
                 @endif
             </div>
         </div>
     </div>
-@endsection
+</x-app-layout>

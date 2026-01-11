@@ -1,13 +1,8 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-2xl mx-auto">
         {{-- Back Link --}}
-        <div class="mb-4">
-            <a href="{{ route('committees.index') }}"
-                class="inline-flex items-center text-sm text-slate-500 hover:text-brand-blue transition-colors">
-                <i class="bi bi-arrow-left mr-2"></i> Back to Committees
-            </a>
+        <div class="mb-6">
+            <x-back-button href="{{ route('committees.index') }}" />
         </div>
 
         <x-card>
@@ -33,10 +28,7 @@
                     </x-input-label>
                     <x-text-input type="text" name="name" id="name" value="{{ old('name') }}" required
                         placeholder="e.g., Technical Committee" />
-                    @error('name')
-                        <p class="text-red-500 text-xs mt-1.5 flex items-center gap-1"><i class="bi bi-exclamation-circle"></i>
-                            {{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('name')" class="mt-1.5" />
                 </div>
 
                 {{-- Description --}}
@@ -46,18 +38,15 @@
                     </x-input-label>
                     <x-textarea name="description" id="description" rows="4"
                         placeholder="Describe the committee's purpose and responsibilities...">{{ old('description') }}</x-textarea>
-                    @error('description')
-                        <p class="text-red-500 text-xs mt-1.5 flex items-center gap-1"><i class="bi bi-exclamation-circle"></i>
-                            {{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('description')" class="mt-1.5" />
                 </div>
 
                 {{-- Actions --}}
-                <div class="pt-4 flex flex-col-reverse sm:flex-row gap-3 border-t border-slate-100 dark:border-slate-700">
-                    <a href="{{ route('committees.index') }}"
-                        class="flex-1 px-5 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-xl text-center transition-all">
+                <div
+                    class="pt-4 flex flex-col-reverse sm:flex-row gap-3 border-t border-slate-100 dark:border-slate-700">
+                    <x-secondary-button href="{{ route('committees.index') }}" class="flex-1 justify-center py-3">
                         Cancel
-                    </a>
+                    </x-secondary-button>
                     <x-primary-button type="submit" class="flex-1 justify-center py-3">
                         <i class="bi bi-check-lg mr-1"></i> Create Committee
                     </x-primary-button>
@@ -65,4 +54,4 @@
             </form>
         </x-card>
     </div>
-@endsection
+</x-app-layout>

@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Send QR Codes</h2>
@@ -60,7 +58,8 @@
             <i class="bi bi-info-circle-fill"></i>
         </div>
         <div class="text-slate-600 dark:text-slate-300 pt-1">
-            <strong class="text-slate-800 dark:text-white font-semibold">Note:</strong> Clicking "Open Gmail" will open a
+            <strong class="text-slate-800 dark:text-white font-semibold">Note:</strong> Clicking "Open Gmail" will open
+            a
             draft with the member's details. You may need to manually attach the QR code image if the link is not
             sufficient.
         </div>
@@ -68,7 +67,8 @@
 
     <!-- Desktop View: Table -->
     <div class="hidden md:block">
-        <x-card class="p-0 border-none ring-1 ring-slate-200/50 dark:ring-slate-700/50 overflow-hidden" :embedded="true">
+        <x-card class="p-0 border-none ring-1 ring-slate-200/50 dark:ring-slate-700/50 overflow-hidden"
+            :embedded="true">
             <x-slot name="header">
                 <div class="flex items-center gap-2">
                     <div class="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-brand-teal">
@@ -134,16 +134,10 @@
                     </x-table.tr>
                 @empty
                     <x-table.tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <div
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-full mb-3 ring-1 ring-slate-100 dark:ring-slate-800">
-                                    <i class="bi bi-search text-2xl text-slate-300 dark:text-slate-600"></i>
-                                </div>
-                                <p class="text-slate-800 dark:text-white font-medium">No members found</p>
-                                <p class="text-xs text-slate-400 mt-1">Try adjusting your filters</p>
-                            </div>
-                        </td>
+                        <x-table.td colspan="6" class="p-0">
+                            <x-empty-state icon="search" title="No members found"
+                                description="Try adjusting your filters" />
+                        </x-table.td>
                     </x-table.tr>
                 @endforelse
             </x-table>
@@ -217,16 +211,7 @@
                 </a>
             </x-card>
         @empty
-            <x-card class="text-center py-12">
-                <div class="flex flex-col items-center">
-                    <div
-                        class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-full mb-3 ring-1 ring-slate-100 dark:ring-slate-800">
-                        <i class="bi bi-search text-2xl text-slate-300 dark:text-slate-600"></i>
-                    </div>
-                    <p class="text-slate-800 dark:text-white font-medium">No members found</p>
-                    <p class="text-xs text-slate-400 mt-1">Try adjusting your filters</p>
-                </div>
-            </x-card>
+            <x-empty-state icon="search" title="No members found" description="Try adjusting your filters" />
         @endforelse
 
         {{-- Mobile Pagination --}}
@@ -236,4 +221,4 @@
             </div>
         @endif
     </div>
-@endsection
+</x-app-layout>

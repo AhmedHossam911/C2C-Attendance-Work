@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-7xl mx-auto space-y-6">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -30,26 +28,15 @@
         </div>
 
         @if (!request('search'))
-            <x-card
-                class="text-center py-20 border-dashed border-2 border-slate-200 dark:border-slate-700 bg-transparent shadow-none">
-                <div
-                    class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-search text-2xl text-slate-400"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">Ready to Search</h3>
-                <p class="text-slate-500 max-w-sm mx-auto mt-2 text-sm">Enter a member's Name, ID, or Email above to view
-                    their full profile.</p>
-            </x-card>
+            <div class="py-12">
+                <x-empty-state icon="search" title="Ready to Search"
+                    description="Enter a member's Name, ID, or Email above to view their full profile." />
+            </div>
         @elseif ($members->isEmpty())
-            <x-card class="text-center py-20">
-                <div
-                    class="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="bi bi-person-x text-2xl text-red-500"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">No Member Found</h3>
-                <p class="text-slate-500 mt-2 text-sm">We couldn't find any member matching "<span
-                        class="font-bold">{{ request('search') }}</span>".</p>
-            </x-card>
+            <div class="py-12">
+                <x-empty-state icon="person-x" title="No Member Found"
+                    description="We couldn't find any member matching &quot;{{ request('search') }}&quot;." />
+            </div>
         @else
             <!-- Results -->
             <div class="space-y-8">
@@ -66,7 +53,8 @@
                                 <div class="relative pt-12 px-4 text-center">
                                     <!-- Avatar -->
                                     <div class="relative inline-block">
-                                        <div class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-1 shadow-lg mx-auto">
+                                        <div
+                                            class="w-24 h-24 rounded-2xl bg-white dark:bg-slate-800 p-1 shadow-lg mx-auto">
                                             <div
                                                 class="w-full h-full rounded-xl bg-gradient-to-br from-brand-blue to-purple-600 flex items-center justify-center text-3xl font-bold text-white uppercase">
                                                 {{ substr($member->name, 0, 1) }}
@@ -118,12 +106,12 @@
                                     <div
                                         class="pt-6 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3">
                                         <a href="{{ route('reports.export.members', ['search' => $member->id]) }}"
-                                            class="btn-secondary text-xs py-2 justify-center">
+                                            class="flex items-center justify-center px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-xs">
                                             <i class="bi bi-download mr-1"></i> Export
                                         </a>
                                         <button
                                             onclick="document.getElementById('qr-modal-{{ $member->id }}').showModal()"
-                                            class="btn-primary text-xs py-2 justify-center">
+                                            class="flex items-center justify-center px-4 py-2 bg-brand-blue text-white font-bold rounded-lg hover:bg-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all text-xs">
                                             <i class="bi bi-qr-code mr-1"></i> QR Code
                                         </button>
                                     </div>
@@ -145,7 +133,8 @@
                                         <div class="bg-white p-4 rounded-xl shadow-inner border border-slate-100">
                                             {!! SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->margin(1)->color(30, 41, 59)->generate($member->id) !!}
                                         </div>
-                                        <p class="text-slate-500 text-sm mt-4 font-mono select-all">{{ $member->id }}</p>
+                                        <p class="text-slate-500 text-sm mt-4 font-mono select-all">{{ $member->id }}
+                                        </p>
                                         <p class="text-xs text-slate-400 mt-1">Scan to mark attendance</p>
                                     </div>
                                 </form>
@@ -164,7 +153,8 @@
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="text-slate-400 text-xs italic">No committees assigned.</p>
+                                    <x-empty-state icon="people" title="No Committees"
+                                        description="No committees assigned." />
                                 @endif
                             </x-card>
                         </div>
@@ -191,7 +181,8 @@
                                 </x-card>
 
                                 <x-card class="bg-slate-50 dark:bg-slate-800/50">
-                                    <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Late Count
+                                    <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Late
+                                        Count
                                     </div>
                                     <div class="text-3xl font-bold text-amber-500">
                                         {{ $member->attendanceRecords->where('status', 'late')->count() }}
@@ -202,17 +193,17 @@
 
                             <!-- Attendance Timeline -->
                             <x-card>
-                                <h3 class="font-bold text-slate-800 dark:text-white mb-6 flex items-center justify-between">
+                                <h3
+                                    class="font-bold text-slate-800 dark:text-white mb-6 flex items-center justify-between">
                                     <span>Attendance History</span>
                                 </h3>
 
                                 @if ($member->attendanceRecords->isEmpty())
-                                    <div class="text-center py-12">
-                                        <i class="bi bi-calendar-x text-slate-300 text-3xl mb-2 block"></i>
-                                        <p class="text-slate-500 dark:text-slate-400">No attendance records found.</p>
-                                    </div>
+                                    <x-empty-state icon="calendar-x" title="No Records"
+                                        description="No attendance records found." />
                                 @else
-                                    <div class="relative pl-4 border-l-2 border-slate-100 dark:border-slate-700 space-y-8">
+                                    <div
+                                        class="relative pl-4 border-l-2 border-slate-100 dark:border-slate-700 space-y-8">
                                         @foreach ($member->attendanceRecords->take(10) as $record)
                                             <div class="relative">
                                                 <!-- Dot -->
@@ -244,8 +235,10 @@
                                         @endforeach
                                     </div>
                                     @if ($member->attendanceRecords->count() > 10)
-                                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
-                                            <span class="text-xs text-slate-500">Showing recent 10 records only. Export for
+                                        <div
+                                            class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+                                            <span class="text-xs text-slate-500">Showing recent 10 records only. Export
+                                                for
                                                 full history.</span>
                                         </div>
                                     @endif
@@ -258,19 +251,9 @@
 
             @if ($members->hasPages())
                 <div class="mt-8">
-                    {{ $members->links('components.pagination') }}
+                    {{ $members->links() }}
                 </div>
             @endif
         @endif
     </div>
-
-    <style>
-        .btn-primary {
-            @apply flex items-center px-4 py-2 bg-brand-blue text-white font-bold rounded-lg hover:bg-blue-600 hover:shadow-lg hover:-translate-y-0.5 transition-all;
-        }
-
-        .btn-secondary {
-            @apply flex items-center px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all;
-        }
-    </style>
-@endsection
+</x-app-layout>

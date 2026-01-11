@@ -1,13 +1,8 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-2xl mx-auto">
         {{-- Back Link --}}
-        <div class="mb-4">
-            <a href="{{ route('users.index') }}"
-                class="inline-flex items-center text-sm text-slate-500 hover:text-brand-blue transition-colors">
-                <i class="bi bi-arrow-left mr-2"></i> Back to Users
-            </a>
+        <div class="mb-6">
+            <x-back-button href="{{ route('users.index') }}" />
         </div>
 
         <x-card>
@@ -56,7 +51,8 @@
                         <x-input-label for="role" icon="bi-person-badge">Role</x-input-label>
                         <x-select-input name="role" id="role" class="w-full mt-1" required>
                             <option value="member" {{ old('role') == 'member' ? 'selected' : '' }}>Member</option>
-                            <option value="committee_head" {{ old('role') == 'committee_head' ? 'selected' : '' }}>Committee
+                            <option value="committee_head" {{ old('role') == 'committee_head' ? 'selected' : '' }}>
+                                Committee
                                 Head</option>
                             <option value="hr" {{ old('role') == 'hr' ? 'selected' : '' }}>HR</option>
                             <option value="board" {{ old('role') == 'board' ? 'selected' : '' }}>Board</option>
@@ -70,7 +66,8 @@
                         <x-select-input name="status" id="status" class="w-full mt-1" required>
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="disabled" {{ old('status') == 'disabled' ? 'selected' : '' }}>Disabled</option>
+                            <option value="disabled" {{ old('status') == 'disabled' ? 'selected' : '' }}>Disabled
+                            </option>
                         </x-select-input>
                         <x-input-error :messages="$errors->get('status')" class="mt-1.5" />
                     </div>
@@ -78,7 +75,8 @@
 
                 {{-- Actions --}}
                 <div class="pt-4 flex flex-col sm:flex-row gap-3">
-                    <x-secondary-button href="{{ route('users.index') }}" class="flex-1 justify-center py-2.5 text-center">
+                    <x-secondary-button href="{{ route('users.index') }}"
+                        class="flex-1 justify-center py-2.5 text-center">
                         Cancel
                     </x-secondary-button>
                     <x-primary-button class="flex-1 justify-center py-2.5">
@@ -88,4 +86,4 @@
             </form>
         </x-card>
     </div>
-@endsection
+</x-app-layout>

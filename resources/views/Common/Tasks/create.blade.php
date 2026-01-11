@@ -1,13 +1,8 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-3xl mx-auto">
         {{-- Header --}}
         <div class="flex items-center gap-4 mb-8">
-            <a href="{{ route('tasks.index') }}"
-                class="h-10 w-10 rounded-xl bg-slate-300 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <i class="bi bi-arrow-left text-lg"></i>
-            </a>
+            <x-back-button href="{{ route('tasks.index') }}" />
             <div>
                 <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Create New Task</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm">Assign a new task to a committee.</p>
@@ -15,7 +10,8 @@
         </div>
 
         {{-- Form Card --}}
-        <div class="bg-slate-300 dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-slate-700">
+        <div
+            class="bg-slate-300 dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-slate-700">
             <form action="{{ route('tasks.store') }}" method="POST" class="space-y-6">
                 @csrf
 
@@ -112,4 +108,4 @@
             </form>
         </div>
     </div>
-@endsection
+</x-app-layout>

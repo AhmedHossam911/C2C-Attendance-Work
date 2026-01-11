@@ -1,6 +1,4 @@
-@extends('Common.Layouts.app')
-
-@section('content')
+<x-app-layout>
     <div class="max-w-3xl mx-auto space-y-6" x-data="{ selectedSession: {{ $activeSessions->first()?->id ?? 'null' }} }">
         <!-- Header -->
         <div class="text-center mb-2">
@@ -9,20 +7,15 @@
         </div>
 
         @if ($activeSessions->isEmpty())
-            <!-- No Active Sessions -->
-            <x-card class="text-center py-10">
-                <div class="flex flex-col items-center">
-                    <div class="p-4 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-4">
-                        <i class="bi bi-exclamation-triangle text-3xl text-amber-600 dark:text-amber-400"></i>
-                    </div>
-                    <p class="text-slate-700 dark:text-slate-300 font-medium mb-2">No Active Sessions</p>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">Please open a session first before scanning.</p>
+            <x-empty-state icon="exclamation-triangle" title="No Active Sessions"
+                description="Please open a session first before scanning.">
+                <x-slot name="action">
                     <a href="{{ route('sessions.index') }}"
-                        class="inline-flex items-center mt-4 px-4 py-2.5 bg-blue-600 text-slate-50 font-bold text-sm rounded-xl hover:bg-blue-700 transition-all">
+                        class="inline-flex items-center px-4 py-2.5 bg-blue-600 text-slate-50 font-bold text-sm rounded-xl hover:bg-blue-700 transition-all">
                         <i class="bi bi-calendar-event mr-2"></i> View Sessions
                     </a>
-                </div>
-            </x-card>
+                </x-slot>
+            </x-empty-state>
         @else
             <!-- Session Selection Cards -->
             <div>
@@ -69,7 +62,8 @@
                 <!-- Hidden select for form submission -->
                 <select id="sessionSelect" class="hidden">
                     @foreach ($activeSessions as $session)
-                        <option value="{{ $session->id }}" {{ $loop->first ? 'selected' : '' }}>{{ $session->title }}
+                        <option value="{{ $session->id }}" {{ $loop->first ? 'selected' : '' }}>
+                            {{ $session->title }}
                         </option>
                     @endforeach
                 </select>
@@ -103,7 +97,8 @@
                     class="mt-4 p-3 bg-slate-100 dark:bg-slate-900/50 rounded-xl text-xs text-slate-500 dark:text-slate-400">
                     <div class="flex items-start gap-2">
                         <i class="bi bi-lightbulb text-amber-500 mt-0.5"></i>
-                        <span><strong class="text-slate-600 dark:text-slate-300">Tip:</strong> Hold the QR code steady and
+                        <span><strong class="text-slate-600 dark:text-slate-300">Tip:</strong> Hold the QR code steady
+                            and
                             ensure good lighting for faster scanning.</span>
                     </div>
                 </div>
@@ -121,13 +116,8 @@
 
                 <ul class="divide-y divide-slate-200 dark:divide-slate-700" id="recentScansList">
                     <li class="px-6 py-10 text-center" id="noScansPlaceholder">
-                        <div class="flex flex-col items-center">
-                            <div class="p-3 bg-slate-200 dark:bg-slate-700 rounded-full mb-3">
-                                <i class="bi bi-qr-code text-xl text-slate-400"></i>
-                            </div>
-                            <p class="text-slate-500 dark:text-slate-400 font-medium">No scans yet</p>
-                            <p class="text-xs text-slate-400 mt-1">Scanned members will appear here</p>
-                        </div>
+                        <x-empty-state icon="qr-code" title="No scans yet"
+                            description="Scanned members will appear here" :center="true" />
                     </li>
                 </ul>
             </x-card>
@@ -311,4 +301,4 @@
             }, config, qrCodeSuccessCallback);
         </script>
     @endif
-@endsection
+</x-app-layout>
