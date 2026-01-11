@@ -2,10 +2,7 @@
 
 @section('content')
     @php
-        $isReadOnly =
-            Auth::user()->role === 'top_management' ||
-            Auth::user()->role === 'board' ||
-            (Auth::user()->role === 'hr' && !Auth::user()->committees->contains($task->committee_id));
+        $isReadOnly = Auth::user()->role === 'top_management' || Auth::user()->role === 'board';
     @endphp
 
     <div x-data="{
@@ -48,7 +45,7 @@
                             @if ($task->deadline->isPast())
                                 <span
                                     class="shrink-0 px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400 rounded-lg text-xs font-bold uppercase tracking-wide">
-                                    Closed
+                                    Late
                                 </span>
                             @else
                                 <span
@@ -62,10 +59,8 @@
                             <span
                                 class="font-bold text-slate-700 dark:text-slate-300">{{ $task->creator->name ?? 'Unknown' }}</span>
                             <span>opened this task {{ $task->created_at->diffForHumans() }}</span>
-                            @if (in_array(Auth::user()->role, ['top_management', 'board', 'committee_head']))
-                                <span class="mx-1">•</span>
-                                <span>{{ $task->submissions_count }} submissions</span>
-                            @endif
+                            <span class="mx-1">•</span>
+                            <span>{{ $task->submissions_count }} submissions</span>
                         </div>
                     </div>
 
@@ -88,105 +83,6 @@
                         @endif
                     </div>
                 </div>
-
-                {{-- Submission Action Box (Relocated to Main Column) --}}
-                @if (auth()->user()->can('submit', $task))
-                    @if (!$task->deadline->isPast() || (isset($mySubmission) && $mySubmission))
-                        <div class="relative group">
-                            <div
-                                class="absolute -inset-0.5 bg-gradient-to-r from-brand-blue to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500">
-                            </div>
-                            <div
-                                class="relative bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 border border-slate-100 dark:border-slate-700 shadow-sm">
-                                <div class="flex items-center gap-4 mb-8">
-                                    <div
-                                        class="h-12 w-12 rounded-2xl bg-brand-blue/10 flex items-center justify-center text-brand-blue shadow-sm">
-                                        <i class="bi bi-send-fill text-xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800 dark:text-white text-xl">Your Submission</h4>
-                                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Submit your work for this
-                                            task directly below.</p>
-                                    </div>
-                                </div>
-
-                                @if (isset($mySubmission))
-                                    <div
-                                        class="mb-8 p-5 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl flex items-start gap-4">
-                                        <div
-                                            class="shrink-0 h-8 w-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-sm shadow-sm">
-                                            <i class="bi bi-check-lg"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0 pt-1">
-                                            <p class="font-bold text-emerald-800 dark:text-emerald-400 text-base mb-1">
-                                                Submitted Successfully
-                                            </p>
-                                            <div
-                                                class="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-500/80 mb-3">
-                                                <i class="bi bi-clock"></i>
-                                                {{ $mySubmission->submitted_at->format('M d, h:i A') }}
-                                                ({{ $mySubmission->submitted_at->diffForHumans() }})
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <a href="{{ $mySubmission->submission_link }}" target="_blank"
-                                                    class="inline-flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-900/50 rounded-lg text-sm font-bold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors border border-emerald-100 dark:border-emerald-900/30 shadow-sm truncate max-w-full">
-                                                    <i class="bi bi-link-45deg text-lg"></i>
-                                                    {{ $mySubmission->submission_link }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <form action="{{ route('tasks.submit', $task) }}" method="POST" class="space-y-6">
-                                    @csrf
-                                    <div>
-                                        <label for="submission_link"
-                                            class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2 pl-1">
-                                            Submission Link
-                                        </label>
-                                        <div class="relative group/input">
-                                            <div
-                                                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                                <i
-                                                    class="bi bi-link-45deg text-slate-400 group-focus-within/input:text-brand-blue text-2xl transition-colors"></i>
-                                            </div>
-                                            <input type="url" name="submission_link" id="submission_link"
-                                                placeholder="Paste your link here (e.g., Google Drive, GitHub)..." required
-                                                class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-medium focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all placeholder:text-slate-400"
-                                                value="{{ $mySubmission->submission_link ?? '' }}">
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label for="note"
-                                            class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-2 pl-1">
-                                            Comments <span
-                                                class="text-slate-400 font-normal lowercase ml-1">(Optional)</span>
-                                        </label>
-                                        <textarea name="note" id="note" rows="3" placeholder="Add any notes for the reviewer..."
-                                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all placeholder:text-slate-400 resize-none">{{ $mySubmission->note ?? '' }}</textarea>
-                                    </div>
-
-                                    <div class="pt-2">
-                                        <button type="submit"
-                                            class="w-full md:w-auto md:min-w-[200px] py-3.5 px-8 bg-brand-blue hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-brand-blue/20 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3 group/btn">
-                                            @if (isset($mySubmission))
-                                                <span>Update Submission</span>
-                                                <i
-                                                    class="bi bi-arrow-repeat group-hover/btn:rotate-180 transition-transform duration-500 text-lg"></i>
-                                            @else
-                                                <span>Submit Work</span>
-                                                <i
-                                                    class="bi bi-send-fill group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform"></i>
-                                            @endif
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    @endif
-                @endif
 
                 {{-- Submissions Section --}}
                 @can('viewAllSubmissions', $task)
@@ -448,17 +344,13 @@
             </div>
         </div>
 
-        <!-- Review Modal (Placeholder for logic) -->
-
-
         <!-- Alpine Listener for Modal -->
         <div x-show="showReviewModal" x-transition
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
             style="display: none;">
             <div @click.away="showReviewModal = false"
                 class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full m-4 overflow-hidden">
-                @include('tasks.partials.review-modal-content')
-                <!-- Note: Ideally strict separation, but inlining content similarly to above x-modal logic or ensuring x-modal uses the Alpine scope -->
+                @include('Common.Tasks.partials.review-modal-content')
             </div>
         </div>
 

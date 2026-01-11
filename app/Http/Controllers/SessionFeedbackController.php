@@ -10,20 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionFeedbackController extends Controller
 {
-    /**
-     * Show the feedback creation form.
-     */
-    public function create(AttendanceSession $session)
-    {
-        $user = Auth::user();
-
-        // Check if user has already submitted
-        $userFeedback = SessionFeedback::where('attendance_session_id', $session->id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        return view('Common.Feedbacks.create', compact('session', 'userFeedback'));
-    }
+    // Create method removed as form is embedded in member_show view.
 
     /**
      * Store or update feedback.
@@ -89,7 +76,7 @@ class SessionFeedbackController extends Controller
         $user = Auth::user();
 
         // Access Control
-        if (!in_array($user->role, ['top_management', 'board', 'hr', 'committee_head', 'vice_head'])) {
+        if (!in_array($user->role, ['top_management', 'board', 'committee_head', 'vice_head'])) {
             abort(403);
         }
 

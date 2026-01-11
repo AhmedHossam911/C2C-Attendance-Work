@@ -147,18 +147,21 @@
 
         <!-- Main Content Wrapper -->
         <div class="flex-1 flex flex-col min-w-0 transition-all duration-300 min-h-screen"
-            :class="sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-72'">
+            :class="sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'">
 
             @include('Common.Layouts.partials.topbar')
 
             <!-- Main Content Area -->
-            <main class="flex-1 p-4 md:p-8 w-full max-w-[1600px] mx-auto">
+            <main class="flex-1 p-4 md:p-8 w-full max-w-[1600px] mx-auto pb-8 lg:pb-0">
                 <div class="space-y-6">
 
 
                     @yield('content')
                 </div>
             </main>
+
+            <!-- Spacer for Fixed Footer (Desktop Only) -->
+            <div class="hidden lg:block h-32 w-full"></div>
 
             @include('Common.Layouts.partials.footer')
         </div>

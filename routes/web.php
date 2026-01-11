@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tasks/{task}/submit', [App\Http\Controllers\TaskSubmissionController::class, 'store'])->name('tasks.submit');
     Route::patch('/submissions/{submission}', [App\Http\Controllers\TaskSubmissionController::class, 'update'])->name('submissions.update');
 
-    Route::post('/sessions/{session}/feedback', [App\Http\Controllers\SessionFeedbackController::class, 'store'])->name('sessions.feedback');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -138,9 +138,11 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['auth'])->group(function () {
+        Route::get('/my-history', [SessionController::class, 'history'])->name('sessions.history');
+        Route::get('/sessions/{session}/my-details', [SessionController::class, 'memberDetails'])->name('sessions.member_details'); // NEW
         Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
         Route::get('/sessions/{session}', [SessionController::class, 'show'])->name('sessions.show');
-        Route::get('/sessions/{session}/feedback/create', [App\Http\Controllers\SessionFeedbackController::class, 'create'])->name('sessions.feedback.create');
+
         Route::post('/sessions/{session}/feedback', [App\Http\Controllers\SessionFeedbackController::class, 'store'])->name('sessions.feedback');
         Route::get('/sessions/{session}/feedback-results', [App\Http\Controllers\SessionFeedbackController::class, 'show'])->name('sessions.feedback-results');
     });

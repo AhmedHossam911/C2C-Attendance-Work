@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $data = [];
 
         // 1. Stats
-        if ($user->hasRole('top_management')) {
+        if (in_array($user->role, ['top_management', 'board'])) {
             $data['adminStats'] = [
                 'committees' => Committee::count(),
                 'open_sessions' => AttendanceSession::where('status', 'open')->count(),

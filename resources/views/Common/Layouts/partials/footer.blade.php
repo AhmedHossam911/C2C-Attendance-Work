@@ -1,6 +1,7 @@
 <footer
-    class="bg-slate-300 dark:bg-[#020617] border-t border-slate-200 dark:border-slate-800/60 py-6 transition-all duration-300 ease-in-out">
-    <div class="container mx-auto px-6">
+    class="relative lg:fixed lg:bottom-0 lg:right-0 z-20 bg-slate-300 dark:bg-[#020617] border-t border-slate-200 dark:border-slate-800/60 py-4 transition-all duration-300 ease-in-out"
+    :class="sidebarCollapsed ? 'left-0 lg:left-20' : 'left-0 lg:left-72'">
+    <div class="w-full max-w-[1600px] mx-auto px-4 md:px-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <!-- Left: Developer Info -->
             <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">

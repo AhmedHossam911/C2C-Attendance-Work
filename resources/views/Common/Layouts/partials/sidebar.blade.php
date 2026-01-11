@@ -86,33 +86,33 @@
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap">My Tasks</span>
                     </a>
 
-                    <a href="{{ route('sessions.index') }}" class="sidebar-link group"
-                        :class="[
-                            {{ request()->routeIs('sessions.*') && request('status') != 'closed' ? 'true' : 'false' }} ?
-                            'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
-                            'sidebar-link-inactive',
-                            sidebarCollapsed ? 'justify-center px-2' : ''
-                        ]"
-                        title="My Sessions">
-                        <i
-                            class="bi bi-calendar-event text-lg {{ request()->routeIs('sessions.*') && request('status') != 'closed' ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">My Sessions</span>
-                    </a>
-
-                    @if (!in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
-                        <a href="{{ route('sessions.index', ['status' => 'closed']) }}" class="sidebar-link group"
+                    @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head']))
+                        <a href="{{ route('sessions.index') }}" class="sidebar-link group"
                             :class="[
-                                {{ request()->routeIs('sessions.*') && request('status') == 'closed' ? 'true' : 'false' }} ?
+                                {{ request()->routeIs('sessions.index') ? 'true' : 'false' }} ?
                                 'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
                                 'sidebar-link-inactive',
                                 sidebarCollapsed ? 'justify-center px-2' : ''
                             ]"
-                            title="History & Feedback">
+                            title="My Sessions">
                             <i
-                                class="bi bi-clock-history text-lg {{ request()->routeIs('sessions.*') && request('status') == 'closed' ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">History & Feedback</span>
+                                class="bi bi-calendar-event text-lg {{ request()->routeIs('sessions.index') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">My Sessions</span>
                         </a>
                     @endif
+
+                    <a href="{{ route('sessions.history') }}" class="sidebar-link group"
+                        :class="[
+                            {{ request()->routeIs('sessions.history') ? 'true' : 'false' }} ?
+                            'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
+                            'sidebar-link-inactive',
+                            sidebarCollapsed ? 'justify-center px-2' : ''
+                        ]"
+                        title="History & Feedback">
+                        <i
+                            class="bi bi-clock-history text-lg {{ request()->routeIs('sessions.history') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">History & Feedback</span>
+                    </a>
                 </div>
             </div>
 
@@ -172,7 +172,7 @@
             @endif
 
             <!-- SECTION: INSIGHTS -->
-            @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head']))
+            @if (in_array(Auth::user()->role, ['top_management', 'board', 'committee_head']))
                 <div>
                     <div class="mt-3 mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
                         :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">

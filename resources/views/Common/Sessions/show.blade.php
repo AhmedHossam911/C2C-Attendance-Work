@@ -30,7 +30,7 @@
                 </span>
             </div>
             <div>
-                @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                @if ($canManageSession && in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
                     <form action="{{ route('sessions.toggle', $session) }}" method="POST">
                         @csrf
                         <button type="submit"
@@ -80,32 +80,8 @@
                 <!-- Desktop Table -->
                 <div class="hidden md:block">
                     @php
-                        $userConfigRole = Auth::user()->role;
-                        // Determine if user can see full list:
-                        // Top Management, Board -> Yes
-                        // HR -> Yes (if Authorized - logic handled in controller? OR here check authorized?)
-                        // Head -> Yes (if Authorized - controller filters this anyway if we stick to strict view access)
-                        // Member -> NO.
-
-                        // Per requirements:
-                        // HR: View List of ssession and attendance list for Authorized
-                        // Head: View List --> Authorized and can't make anything else just view list of sessions and attendance list
-// Member: View List only without see attendance list... show his status
-
-$canViewTable = in_array($userConfigRole, [
-    'top_management',
-    'board',
-    'hr',
-    'committee_head',
-    'vice_head',
-]);
-// Note: Middleware/Controller logic might already filter *which* sessions they see.
-// But if they see it, can they see the *table*?
-// Member -> NO.
-
-// Refined Check for HR/Head: Ensure they are actually authorized?
-// Controller logic for 'show' allows access if authorized.
-                        // So if they are here, they are authorized. Use Role check.
+                        // Use controller-provided property for consistency
+                        $canViewTable = $canManageSession;
                     @endphp
 
                     @if ($canViewTable)
@@ -160,7 +136,7 @@ $canViewTable = in_array($userConfigRole, [
                                     </x-table.td>
 
                                     <x-table.td class="text-right">
-                                        @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                                        @if ($canManageSession && in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
                                             <div class="flex items-center justify-end gap-2">
                                                 <button type="button"
                                                     class="p-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 rounded hover:bg-blue-100 transition-colors"
@@ -188,33 +164,9 @@ $canViewTable = in_array($userConfigRole, [
                             @endforeach
                         </x-table>
                     @else
-                        <!-- Member View: Show ONLY their own record if exists -->
-                        <div class="p-8 text-center bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                            @php
-                                $myRecord = $records->where('user_id', Auth::id())->first();
-                            @endphp
-
-                            @if ($myRecord)
-                                <div
-                                    class="inline-block p-6 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                                    <div class="mb-4">
-                                        <div
-                                            class="h-20 w-20 mx-auto rounded-full bg-green-100 text-green-600 flex items-center justify-center text-4xl mb-2">
-                                            <i class="bi bi-check-lg"></i>
-                                        </div>
-                                        <h4 class="text-xl font-bold text-slate-900 dark:text-white">You are Present</h4>
-                                    </div>
-                                    <div class="text-sm text-slate-500">
-                                        Scanned at <span
-                                            class="font-bold font-mono">{{ $myRecord->scanned_at->format('h:i A') }}</span>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="text-slate-400">
-                                    <i class="bi bi-qr-code-scan text-4xl mb-2"></i>
-                                    <p class="font-medium">You have not scanned in yet.</p>
-                                </div>
-                            @endif
+                        <!-- No Permission / Empty State -->
+                        <div class="p-8 text-center text-slate-500">
+                            <p>You do not have permission to view the attendance list.</p>
                         </div>
                     @endif
                 </div>
@@ -290,7 +242,7 @@ $canViewTable = in_array($userConfigRole, [
                                         </div>
                                     @endif
 
-                                    @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                                    @if ($canManageSession && in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
                                         <div
                                             class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
                                             <button type="button"
@@ -322,33 +274,8 @@ $canViewTable = in_array($userConfigRole, [
                             </div>
                         @endforelse
                     @else
-                        <!-- Mobile Member View -->
-                        <div class="p-8 text-center bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                            @php
-                                $myRecord = $records->where('user_id', Auth::id())->first();
-                            @endphp
-
-                            @if ($myRecord)
-                                <div
-                                    class="inline-block p-6 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 w-full">
-                                    <div class="mb-4">
-                                        <div
-                                            class="h-16 w-16 mx-auto rounded-full bg-green-100 text-green-600 flex items-center justify-center text-3xl mb-2">
-                                            <i class="bi bi-check-lg"></i>
-                                        </div>
-                                        <h4 class="text-lg font-bold text-slate-900 dark:text-white">Present</h4>
-                                    </div>
-                                    <div class="text-sm text-slate-500">
-                                        <span
-                                            class="font-bold font-mono">{{ $myRecord->scanned_at->format('h:i A') }}</span>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="text-slate-400">
-                                    <i class="bi bi-qr-code-scan text-4xl mb-2"></i>
-                                    <p class="font-medium text-sm">Not scanned yet.</p>
-                                </div>
-                            @endif
+                        <div class="p-8 text-center text-slate-500">
+                            <p>No permission to view records.</p>
                         </div>
                     @endif
                 </div>
@@ -466,123 +393,6 @@ $canViewTable = in_array($userConfigRole, [
                         </div>
                     </div>
                 </div>
-            </div>
-        @endif
-
-        <!-- Member Feedback Section (Visible to HR/Member/Head who are participants) -->
-        @php
-            $currentUserRecord = $records->where('user_id', Auth::id())->first();
-            // Check if eligible: Attended (Present/Late) AND Session Closed
-            $isEligible =
-                $currentUserRecord &&
-                in_array($currentUserRecord->status, ['present', 'late']) &&
-                $session->status === 'closed';
-            $myFeedback = \App\Models\SessionFeedback::where('attendance_session_id', $session->id)
-                ->where('user_id', Auth::id())
-                ->first();
-        @endphp
-
-        @if ($isEligible)
-            <div class="mt-8 border-t border-slate-100 dark:border-slate-800 pt-8">
-                <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-4">Your Feedback</h3>
-
-                @if ($myFeedback)
-                    <!-- Read Only View -->
-                    <x-card>
-                        <div class="flex items-center gap-2 mb-4 text-green-600 dark:text-green-400 text-sm font-bold">
-                            <i class="bi bi-check-circle-fill"></i> Feedback Submitted
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl">
-                                <span class="block text-xs text-slate-500 uppercase font-bold">Objectives Clarity</span>
-                                <div class="flex text-amber-400 gap-1 mt-1">
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <i
-                                            class="bi bi-star{{ $i <= $myFeedback->objectives_clarity ? '-fill' : '' }}"></i>
-                                    @endfor
-                                </div>
-                            </div>
-                            <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl">
-                                <span class="block text-xs text-slate-500 uppercase font-bold">Instructor
-                                    Understanding</span>
-                                <div class="flex text-amber-400 gap-1 mt-1">
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <i
-                                            class="bi bi-star{{ $i <= $myFeedback->instructor_understanding ? '-fill' : '' }}"></i>
-                                    @endfor
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                            <span class="block text-xs text-slate-500 uppercase font-bold mb-2">Your Comment</span>
-                            <p class="text-slate-700 dark:text-slate-300 italic">
-                                "{{ $myFeedback->feedback ?: 'No written comment provided.' }}"
-                            </p>
-                        </div>
-                    </x-card>
-                @else
-                    <!-- Submission Form -->
-                    @if (!in_array(Auth::user()->role, ['top_management', 'board', 'committee_head', 'vice_head']))
-                        <x-card>
-                            <form action="{{ route('sessions.feedback', $session) }}" method="POST" class="space-y-4">
-                                @csrf
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label
-                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Objectives
-                                            Clarity (1-5)</label>
-                                        <select name="objectives_clarity"
-                                            class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800"
-                                            required>
-                                            <option value="5">5 - Very Clear</option>
-                                            <option value="4">4 - Clear</option>
-                                            <option value="3">3 - Average</option>
-                                            <option value="2">2 - Unclear</option>
-                                            <option value="1">1 - Very Unclear</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label
-                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Instructor
-                                            (1-5)</label>
-                                        <select name="instructor_understanding"
-                                            class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800"
-                                            required>
-                                            <option value="5">5 - Excellent</option>
-                                            <option value="4">4 - Good</option>
-                                            <option value="3">3 - Average</option>
-                                            <option value="2">2 - Poor</option>
-                                            <option value="1">1 - Very Poor</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Hidden defaults for required fields not in simple UI -->
-                                <input type="hidden" name="overall_satisfaction" value="10">
-                                <input type="hidden" name="room_suitability" value="Good">
-                                <input type="hidden" name="attendance_system_rating" value="10">
-
-                                <div>
-                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Comments
-                                        (Optional)</label>
-                                    <textarea name="feedback" rows="3"
-                                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800"
-                                        placeholder="Share your thoughts..."></textarea>
-                                </div>
-
-                                <button type="submit"
-                                    class="px-6 py-2 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blue/90 transition-all">
-                                    Submit Feedback
-                                </button>
-                            </form>
-                        </x-card>
-                    @else
-                        <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-center text-slate-500 text-sm">
-                            Feedback submission is disabled for your role.
-                        </div>
-                    @endif
-                @endif
             </div>
         @endif
     </div>

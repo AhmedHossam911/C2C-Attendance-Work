@@ -23,7 +23,7 @@
             <span>My Sessions</span>
         </a>
 
-        @if (!in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+        @if (!in_array(Auth::user()->role, ['top_management', 'board']))
             <a href="{{ route('sessions.index', ['status' => 'closed']) }}"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors {{ request()->routeIs('sessions.*') && request('status') == 'closed' ? 'bg-teal-50 text-brand-teal dark:bg-teal-900/10 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <i class="bi bi-clock-history text-lg"></i>

@@ -45,14 +45,22 @@ class TaskController extends Controller
         $selectedCommittee = null;
         $tasks = collect();
 
-        if ($request->filled('committee_id')) {
-            $selectedCommittee = $committees->firstWhere('id', $request->committee_id);
+        // Default to first committee if none selected
+        $committeeId = $request->get('committee_id');
+        if (!$committeeId && $committees->isNotEmpty()) {
+            $committeeId = $committees->first()->id;
+        }
+
+        if ($committeeId) {
+            $selectedCommittee = $committees->firstWhere('id', $committeeId);
             if ($selectedCommittee) {
-                $tasks = Task::with(['committee', 'creator'])
+                $tasks = Task::with(['committee', 'creator', 'submissions' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                }])
                     ->withCount('submissions')
-                    ->where('committee_id', $request->committee_id)
+                    ->where('committee_id', $committeeId)
                     ->latest()
-                    ->paginate(10)
+                    ->paginate(50)
                     ->withQueryString();
             }
         }
@@ -131,7 +139,7 @@ class TaskController extends Controller
             abort(403);
         }
 
-        $submission = $task->submissionFor($user->id);
+        $mySubmission = $task->submissionFor($user->id);
 
         // Load all submissions if user can view them (not same as review permission)
         $submissions = null;
@@ -160,7 +168,18 @@ class TaskController extends Controller
 
         $task->loadCount('submissions');
 
-        return view('Common.Tasks.show', compact('task', 'submission', 'submissions'));
+        $isManagement = in_array($user->role, ['top_management', 'board', 'committee_head']);
+
+        // HR sees Admin View for committees they are authorized for but NOT a member of
+        if ($user->role === 'hr' && !$user->committees->contains($task->committee_id)) {
+            $isManagement = true;
+        }
+
+        if ($isManagement) {
+            return view('Common.Tasks.show-admin', compact('task', 'mySubmission', 'submissions'));
+        }
+
+        return view('Common.Tasks.show-member', compact('task', 'mySubmission', 'submissions'));
     }
 
     public function edit(Task $task)

@@ -29,27 +29,20 @@ class TaskSubmissionController extends Controller
         // Check existing
         $submission = $task->submissionFor(Auth::id());
         if ($submission) {
-            // Update existing
-            $submission->update([
-                'submission_link' => $request->submission_link,
-                'note' => $request->note,
-                'is_late' => $isLate ? true : $submission->is_late, // If specific update happens late, does it mark generic late? Yes.
-                'submitted_at' => Carbon::now(),
-            ]);
-            $message = 'Submission updated.';
-        } else {
-            // Create New
-            $submission = TaskSubmission::create([
-                'task_id' => $task->id,
-                'user_id' => Auth::id(),
-                'submission_link' => $request->submission_link,
-                'note' => $request->note,
-                'is_late' => $isLate,
-                'status' => 'pending',
-                'submitted_at' => Carbon::now(),
-            ]);
-            $message = 'Task submitted successfully.';
+            return back()->with('error', 'You have already submitted this task. Updates are not allowed.');
         }
+
+        // Create New
+        $submission = TaskSubmission::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::id(),
+            'submission_link' => $request->submission_link,
+            'note' => $request->note,
+            'is_late' => $isLate,
+            'status' => 'pending',
+            'submitted_at' => Carbon::now(),
+        ]);
+        $message = 'Task submitted successfully.';
 
         if ($isLate) {
             $message .= ' (Marked as Late)';

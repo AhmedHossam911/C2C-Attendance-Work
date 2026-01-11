@@ -41,59 +41,59 @@
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <!-- Stat Card: Committees -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">
                             Committees</p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $adminStats['committees'] }}</h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Stat Card: Sessions -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">Active
                             Sessions</p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $adminStats['open_sessions'] }}
                         </h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-clock-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Stat Card: Attendees -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">
                             Attendees Today</p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $adminStats['attendees_today'] }}
                         </h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-person-check-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Stat Card: Users -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-person-lines-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">Total
                             Users</p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $adminStats['total_users'] }}</h3>
-                    </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-people-fill"></i>
                     </div>
                 </div>
             </div>
@@ -104,62 +104,62 @@
 
                 <!-- My Committees -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">My
                             Committees
                         </p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $headStats['my_committees'] }}</h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-people-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Total Members -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">Total
                             Members
                         </p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $headStats['total_members'] }}</h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-person-badge-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Open Sessions -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">Open
                             Sessions
                         </p>
                         <h3 class="text-3xl font-bold text-slate-900 dark:text-white">{{ $headStats['open_sessions'] }}</h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-clock-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Pending Reviews -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-brand-blue dark:text-blue-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="bi bi-list-check"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">
                             Pending Reviews
                         </p>
                         <h3 class="text-3xl font-bold text-brand-blue dark:text-blue-400">
                             {{ $headStats['pending_reviews'] ?? 0 }}</h3>
-                    </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-brand-blue dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
-                        <i class="bi bi-list-check"></i>
                     </div>
                 </div>
             </div>
@@ -171,7 +171,11 @@
 
                 <!-- Pending Tasks -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-brand-blue dark:text-blue-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-list-task"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">
                             Pending Tasks
@@ -180,15 +184,15 @@
                             {{ $memberStats['pending_tasks'] }}
                         </h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-blue-500/10 text-brand-blue dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                        <i class="bi bi-list-task"></i>
-                    </div>
                 </div>
 
                 <!-- Total Attendance -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-slate-300/10 text-slate-600 dark:text-teal-300 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">My
                             Attendance
@@ -196,39 +200,35 @@
                         <h3 class="text-3xl font-bold text-slate-700 dark:text-teal-200">{{ $memberStats['total'] }}
                         </h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-slate-300/10 text-slate-600 dark:text-teal-300 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                        <i class="bi bi-calendar-check-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Present -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-teal-500/10 text-brand-teal dark:text-teal-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">
                             Present</p>
                         <h3 class="text-3xl font-bold text-brand-teal dark:text-teal-400">{{ $memberStats['present'] }}
                         </h3>
                     </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-teal-500/10 text-brand-teal dark:text-teal-400 flex items-center justify-center text-xl group-hover:scale-105 transition-transform">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
                 </div>
 
                 <!-- Late -->
                 <div
-                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    class="bg-slate-300 dark:bg-[#1e293b] p-6 rounded-[1.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-4 group hover:-translate-y-2 hover:shadow-lg transition-all duration-300">
+                    <div
+                        class="h-12 w-12 rounded-2xl bg-yellow-500/10 text-brand-gold dark:text-yellow-400 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    </div>
                     <div>
                         <p class="text-slate-500 dark:text-teal-300 text-xs font-bold uppercase tracking-wider mb-1">Late
                         </p>
                         <h3 class="text-3xl font-bold text-brand-gold dark:text-yellow-400">{{ $memberStats['late'] }}
                         </h3>
-                    </div>
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-yellow-500/10 text-brand-gold dark:text-yellow-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                        <i class="bi bi-exclamation-circle-fill"></i>
                     </div>
                 </div>
             </div>
@@ -458,7 +458,7 @@
                         </p>
 
                         <div
-                            class="bg-slate-300 p-4 rounded-2xl inline-block shadow-lg mx-auto transform transition-all hover:scale-105 cursor-pointer">
+                            class="bg-white p-4 rounded-2xl inline-block shadow-lg mx-auto transform transition-all hover:scale-105 cursor-pointer">
                             {!! SimpleSoftwareIO\QrCode\Facades\QrCode::size(160)->generate(Auth::id()) !!}
                         </div>
 

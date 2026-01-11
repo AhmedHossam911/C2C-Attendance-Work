@@ -13,21 +13,24 @@ class SessionController extends Controller
         $user = Auth::user();
         $query = AttendanceSession::with('committee')->withCount('records');
 
-        // Role-based Access Control
+        // CONTROL VIEW LOGIC
         if ($user->hasRole('top_management') || $user->hasRole('board')) {
             // Can view all sessions
         } elseif ($user->hasRole('hr')) {
-            // HR: View sessions for Authorized Committees AND Member Committees
+            // HR: View sessions for Authorized Committees ONLY (Manage)
+            // They do NOT see sessions they are members of here.
             $authorizedIds = $user->authorizedCommittees->pluck('id');
-            // HR sees Member committees too, but View Only (handled in view/show)
-            $memberIds = $user->committees->pluck('id');
-            $query->whereIn('committee_id', $authorizedIds->merge($memberIds)->unique());
+            $query->whereIn('committee_id', $authorizedIds);
         } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head')) {
-            // Heads: View sessions for Authorized Committees ONLY (View Only)
+            // Heads: View sessions for Authorized Committees ONLY (View Only - or Manage if policy allows)
             $query->whereIn('committee_id', $user->authorizedCommittees->pluck('id'));
         } else {
-            // Members: View sessions for Member Committees only
-            $query->whereIn('committee_id', $user->committees->pluck('id'));
+            // Members: Should not be here typically if Sidebar is correct, but if they access it:
+            // return redirect()->route('sessions.history'); // Optional redirect?
+            // For now, let's just show empty or their member sessions if we want fail-safe?
+            // User asked for separation. Let's return empty or 403?
+            // Let's safe-guard: if member, redirect to history.
+            return redirect()->route('sessions.history');
         }
 
         if ($request->filled('committee_id')) {
@@ -52,11 +55,11 @@ class SessionController extends Controller
         if ($user->hasRole('top_management') || $user->hasRole('board')) {
             $committees = \App\Models\Committee::all();
         } elseif ($user->hasRole('hr')) {
-            $committees = $user->authorizedCommittees->merge($user->committees)->unique('id');
+            $committees = $user->authorizedCommittees;
         } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head')) {
             $committees = $user->authorizedCommittees;
         } else {
-            $committees = $user->committees;
+            $committees = collect();
         }
 
         // Prepare authorizedCommitteeIds for View Logic (used in manage checks)
@@ -66,6 +69,25 @@ class SessionController extends Controller
         }
 
         return view('Common.Sessions.index', compact('sessions', 'committees', 'authorizedCommitteeIds'));
+    }
+
+    public function history(Request $request)
+    {
+        $user = Auth::user();
+        // HISTORY VIEW: Sessions where user is a member
+        $memberCommitteeIds = $user->committees->pluck('id');
+
+        // Also include sessions where they are a member even if they are HR? 
+        // "My Sessions" (History) should show where they are a MEMBER.
+
+        $query = AttendanceSession::with(['committee', 'records' => function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        }])
+            ->whereIn('committee_id', $memberCommitteeIds);
+
+        $sessions = $query->latest()->paginate(10);
+
+        return view('Common.Sessions.history', compact('sessions'));
     }
 
     public function export(AttendanceSession $session)
@@ -152,6 +174,19 @@ class SessionController extends Controller
 
     public function show(AttendanceSession $session, Request $request) // Typehint Request
     {
+        $user = Auth::user();
+        $canManageSession = false;
+        if ($user->hasRole('top_management') || $user->hasRole('board')) {
+            $canManageSession = true;
+        } elseif ($user->hasRole('hr') || $user->hasRole('committee_head') || $user->hasRole('vice_head')) {
+            $canManageSession = $user->authorizedCommittees->contains($session->committee_id);
+        }
+
+        // CONTROL VIEW: Only for managers
+        if (!$canManageSession) {
+            abort(403, 'Unauthorized access to session control.');
+        }
+
         $query = $session->records()
             ->with(['user', 'scanner', 'updater'])
             ->orderBy('scanned_at', 'desc');
@@ -166,7 +201,17 @@ class SessionController extends Controller
 
         $records = $query->paginate(20)->withQueryString();
 
-        return view('Common.Sessions.show', compact('session', 'records'));
+        return view('Common.Sessions.show', compact('session', 'records', 'canManageSession'));
+    }
+
+    public function memberDetails(AttendanceSession $session, Request $request)
+    {
+        $user = Auth::user();
+
+        // Pass only the current user's record
+        $records = $session->records()->where('user_id', $user->id)->get();
+
+        return view('Common.Sessions.member_show', compact('session', 'records'));
     }
 
     public function toggleStatus(AttendanceSession $session)
