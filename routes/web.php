@@ -186,7 +186,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/ghost-members', [ReportController::class, 'ghostMembers'])->name('reports.ghost_members');
         Route::get('/reports/committee-performance', [ReportController::class, 'committeePerformance'])->name('reports.committee_performance');
         Route::get('/reports/top-performers', [ReportController::class, 'topPerformers'])->name('reports.top_performers');
-        Route::get('/reports/session-quality', [ReportController::class, 'sessionQuality'])->name('reports.session_quality');
+        Route::get('/reports/session-quality', [App\Http\Controllers\SessionFeedbackController::class, 'index'])->name('reports.session_quality');
         Route::get('/reports/session-quality/{session}', [App\Http\Controllers\SessionFeedbackController::class, 'show'])->name('reports.feedback_details');
         Route::get('/feedbacks', [App\Http\Controllers\SessionFeedbackController::class, 'index'])->name('feedbacks.index');
         Route::get('/reports/attendance-trends', [ReportController::class, 'attendanceTrends'])->name('reports.attendance_trends');

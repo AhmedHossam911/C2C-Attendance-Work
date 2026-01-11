@@ -146,7 +146,7 @@
             @if ($users->hasPages())
                 <div
                     class="px-6 py-4 border-t border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
-                    {{ $users->withQueryString()->links() }}
+                    {{ $users->withQueryString()->links('components.pagination') }}
                 </div>
             @endif
         </x-card>
@@ -217,7 +217,7 @@
         {{-- Mobile Pagination --}}
         @if ($users->hasPages())
             <div class="mt-4">
-                {{ $users->withQueryString()->links() }}
+                {{ $users->withQueryString()->links('components.pagination') }}
             </div>
         @endif
     </div>

@@ -85,14 +85,14 @@ class SessionFeedbackController extends Controller
             ->withAvg('feedbacks', 'overall_satisfaction');
 
         // Committee Filtering based on Role or Request
-        if ($user->hasRole('top_management') || $user->hasRole('board')) {
-            // Full access, optional filter
+        // Committee Filtering based on Role or Request
+        if ($user->hasRole('top_management')) {
+            // Full access for Top Management
             if ($request->filled('committee_id')) {
                 $query->where('committee_id', $request->committee_id);
             }
-        } elseif ($user->hasRole('hr')) {
-            // Only authorized committees
-            // If user selects a specific committee, verify access
+        } else {
+            // Restricted Access (Board, HR, Heads, Vice Heads) - Authorized Only
             if ($request->filled('committee_id')) {
                 if (!$user->authorizedCommittees->contains($request->committee_id)) {
                     abort(403, 'Unauthorized access to this committee.');
@@ -102,11 +102,6 @@ class SessionFeedbackController extends Controller
                 // Show all authorized
                 $query->whereIn('committee_id', $user->authorizedCommittees->pluck('id'));
             }
-        } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head')) {
-            // Only own committee
-            // (Assuming heads are linked via authorizedCommittees or by specific committee_id logic depending on app structure)
-            // Using authorizedCommittees generic approach as per previous context
-            $query->whereIn('committee_id', $user->authorizedCommittees->pluck('id'));
         }
 
         $sessions = $query->latest()
@@ -124,12 +119,11 @@ class SessionFeedbackController extends Controller
 
         // Provide committees for filter dropdown (if accessible)
         $committees = [];
-        if ($user->hasRole('top_management') || $user->hasRole('board') || $user->hasRole('hr')) {
-            if ($user->hasRole('hr')) {
-                $committees = $user->authorizedCommittees;
-            } else {
-                $committees = Committee::all();
-            }
+        if ($user->hasRole('top_management')) {
+            $committees = Committee::all();
+        } else {
+            // Board, HR, Heads see only their authorized committees
+            $committees = $user->authorizedCommittees;
         }
 
         return view('Common.Feedbacks.index', compact('sessions', 'committees'));
@@ -148,10 +142,10 @@ class SessionFeedbackController extends Controller
         }
 
         // 2. Authorization Scope Check
-        if ($user->hasRole('top_management') || $user->hasRole('board')) {
+        if ($user->hasRole('top_management')) {
             // Can view all
-        } elseif ($user->hasRole('committee_head') || $user->hasRole('vice_head') || $user->hasRole('hr')) {
-            // Must be authorized for this committee
+        } else {
+            // Must be authorized for this committee (Board, HR, Heads, Vice Heads)
             if (!$user->authorizedCommittees->contains($session->committee_id)) {
                 abort(403, 'Unauthorized. You do not have access to this committee\'s feedback.');
             }

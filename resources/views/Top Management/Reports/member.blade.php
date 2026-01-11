@@ -251,7 +251,7 @@
 
             @if ($members->hasPages())
                 <div class="mt-8">
-                    {{ $members->links() }}
+                    {{ $members->links('components.pagination') }}
                 </div>
             @endif
         @endif

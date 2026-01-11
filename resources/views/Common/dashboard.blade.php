@@ -182,32 +182,38 @@
             <div class="space-y-6">
                 <!-- Digital ID Card -->
                 <div
-                    class="bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl p-8 text-center text-white shadow-xl border border-slate-700 relative overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
+                    class="bg-gradient-to-b from-slate-100 via-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-8 text-center shadow-xl border border-slate-200 dark:border-slate-700 relative overflow-hidden group hover:scale-[1.01] transition-transform duration-500">
                     <!-- Decor -->
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-brand-teal"></div>
                     <div
-                        class="absolute -top-24 -right-24 w-48 h-48 bg-brand-teal/10 rounded-full blur-3xl group-hover:bg-brand-teal/20 transition-all duration-700">
+                        class="absolute -top-24 -right-24 w-48 h-48 bg-brand-blue/5 dark:bg-brand-teal/10 rounded-full blur-3xl group-hover:bg-brand-blue/10 dark:group-hover:bg-brand-teal/20 transition-all duration-700">
+                    </div>
+                    <div
+                        class="absolute -bottom-16 -left-16 w-32 h-32 bg-brand-teal/5 dark:bg-transparent rounded-full blur-2xl">
                     </div>
 
                     <div class="relative z-10">
                         <div
-                            class="h-24 w-24 mx-auto bg-slate-300 p-1 rounded-full shadow-xl mb-4 group-hover:scale-105 transition-transform">
+                            class="h-24 w-24 mx-auto bg-gradient-to-br from-brand-blue to-brand-teal p-1 rounded-full shadow-xl shadow-brand-blue/20 dark:shadow-brand-blue/10 mb-4 group-hover:scale-105 transition-transform">
                             <div
-                                class="w-full h-full rounded-full bg-slate-300 flex items-center justify-center text-3xl font-bold text-brand-blue">
+                                class="w-full h-full rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-3xl font-bold text-brand-blue dark:text-brand-teal">
                                 {{ substr(Auth::user()->name, 0, 1) }}
                             </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-1">{{ Auth::user()->name }}</h3>
-                        <p class="text-slate-400 text-sm font-medium uppercase tracking-widest mb-6">
+                        <h3 class="text-xl font-bold mb-1 text-slate-800 dark:text-white">{{ Auth::user()->name }}
+                        </h3>
+                        <p
+                            class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-widest mb-6">
                             {{ Auth::user()->hasRole('committee_head') ? 'Committee BOARD' : ucfirst(str_replace('_', ' ', Auth::user()->role)) }}
                         </p>
 
                         <div
-                            class="bg-white p-4 rounded-2xl inline-block shadow-lg mx-auto transform transition-all hover:scale-105 cursor-pointer">
+                            class="bg-white p-4 rounded-2xl inline-block shadow-lg shadow-slate-200/50 dark:shadow-none mx-auto transform transition-all hover:scale-105 cursor-pointer border border-slate-100 dark:border-transparent">
                             {!! SimpleSoftwareIO\QrCode\Facades\QrCode::size(160)->generate(Auth::id()) !!}
                         </div>
 
-                        <div class="mt-6 flex items-center justify-center gap-2 text-sm text-slate-400">
+                        <div
+                            class="mt-6 flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                             <i class="bi bi-person-badge"></i> Use for attendance
                         </div>
                     </div>

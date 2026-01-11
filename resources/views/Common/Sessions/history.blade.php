@@ -127,7 +127,7 @@
         <!-- Pagination -->
         @if ($sessions->hasPages())
             <div class="mt-4">
-                {{ $sessions->links() }}
+                {{ $sessions->links('components.pagination') }}
             </div>
         @endif
     </div>

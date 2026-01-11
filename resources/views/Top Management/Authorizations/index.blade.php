@@ -153,7 +153,7 @@
                     @if ($authorizations->hasPages())
                         <div
                             class="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-                            {{ $authorizations->links() }}
+                            {{ $authorizations->links('components.pagination') }}
                         </div>
                     @endif
                 </x-card>
@@ -247,7 +247,7 @@
 
                 @if ($authorizations->hasPages())
                     <div class="mt-4 flex justify-center">
-                        {{ $authorizations->links() }}
+                        {{ $authorizations->links('components.pagination') }}
                     </div>
                 @endif
             </div>
