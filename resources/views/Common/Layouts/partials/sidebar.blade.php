@@ -39,13 +39,12 @@
         :class="sidebarCollapsed ? 'px-2' : 'px-4'">
 
         @auth
-            <!-- SECTION: MY WORKSPACE (Blue Header) -->
+            <!-- SECTION: GENERAL -->
             <div>
-                <div class="mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
+                <div class="mb-2 font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
                     :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
-                    <span x-show="!sidebarCollapsed" class="whitespace-nowrap">MY WORKSPACE</span>
-                    <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
-                    <i x-show="sidebarCollapsed" class="bi bi-person-fill text-xs text-brand-blue"></i>
+                    <span x-show="!sidebarCollapsed" class="whitespace-nowrap">GENERAL</span>
+                    <i x-show="sidebarCollapsed" class="bi bi-grid-fill text-xs text-slate-400"></i>
                 </div>
 
                 <div class="space-y-1">
@@ -61,7 +60,19 @@
                             class="bi bi-grid-fill text-lg {{ request()->routeIs('dashboard') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
                         <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Dashboard</span>
                     </a>
+                </div>
+            </div>
 
+            <!-- SECTION: MY WORK (Tasks & Attendance) -->
+            <div>
+                <div class="mt-3 mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
+                    :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
+                    <span x-show="!sidebarCollapsed" class="whitespace-nowrap">MY WORK</span>
+                    <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
+                    <i x-show="sidebarCollapsed" class="bi bi-briefcase-fill text-xs text-brand-blue"></i>
+                </div>
+
+                <div class="space-y-1">
                     <a href="{{ route('tasks.index') }}" class="sidebar-link group"
                         :class="[
                             {{ request()->routeIs('tasks.*') ? 'true' : 'false' }} ?
@@ -105,17 +116,14 @@
                 </div>
             </div>
 
-            <!-- SECTION: ADMINISTRATION (Teal Header) -->
-            @if (Auth::user()->hasRole('top_management') ||
-                    Auth::user()->hasRole('board') ||
-                    Auth::user()->hasRole('hr') ||
-                    Auth::user()->hasRole('committee_head'))
+            <!-- SECTION: TEAM MANAGEMENT -->
+            @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head']))
                 <div>
-                    <div class="mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
+                    <div class="mt-3 mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
                         :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
-                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">ADMINISTRATION</span>
+                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">TEAM MANAGMENT</span>
                         <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
-                        <i x-show="sidebarCollapsed" class="bi bi-briefcase-fill text-xs text-brand-blue"></i>
+                        <i x-show="sidebarCollapsed" class="bi bi-people-fill text-xs text-brand-blue"></i>
                     </div>
 
                     <div class="space-y-1">
@@ -132,48 +140,6 @@
                             <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Committees</span>
                         </a>
 
-                        @if (\App\Models\ReportPermission::hasAnyAccess(Auth::user()->role))
-                            <a href="{{ route('reports.index') }}" class="sidebar-link group"
-                                :class="[
-                                    {{ request()->routeIs('reports.index') ? 'true' : 'false' }} ?
-                                    'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
-                                    'sidebar-link-inactive',
-                                    sidebarCollapsed ? 'justify-center px-2' : ''
-                                ]"
-                                title="Reports">
-                                <i
-                                    class="bi bi-bar-chart-fill text-lg {{ request()->routeIs('reports.index') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Reports</span>
-                            </a>
-                        @endif
-
-                        <a href="{{ route('feedbacks.index') }}" class="sidebar-link group"
-                            :class="[
-                                {{ request()->routeIs('feedbacks.*') ? 'true' : 'false' }} ?
-                                'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
-                                'sidebar-link-inactive',
-                                sidebarCollapsed ? 'justify-center px-2' : ''
-                            ]"
-                            title="Feedbacks">
-                            <i
-                                class="bi bi-chat-right-quote-fill text-lg {{ request()->routeIs('feedbacks.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Feedbacks</span>
-                        </a>
-                    </div>
-                </div>
-            @endif
-
-            <!-- SECTION: PLATFORM CONTROLS (Teal Header) -->
-            @if (Auth::user()->hasRole('top_management') || Auth::user()->hasRole('board') || Auth::user()->hasRole('hr'))
-                <div>
-                    <div class="mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
-                        :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
-                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">PLATFORM CONTROLS</span>
-                        <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
-                        <i x-show="sidebarCollapsed" class="bi bi-shield-lock-fill text-xs text-brand-blue"></i>
-                    </div>
-
-                    <div class="space-y-1">
                         @if (Auth::user()->hasRole('top_management'))
                             <a href="{{ route('users.index') }}" class="sidebar-link group"
                                 :class="[
@@ -201,35 +167,63 @@
                                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Approvals</span>
                             </a>
                         @endif
+                    </div>
+                </div>
+            @endif
 
-                        @if (Auth::user()->hasRole('top_management'))
-                            <a href="{{ route('authorizations.index') }}" class="sidebar-link group"
+            <!-- SECTION: INSIGHTS -->
+            @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head']))
+                <div>
+                    <div class="mt-3 mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
+                        :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
+                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">INSIGHTS</span>
+                        <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
+                        <i x-show="sidebarCollapsed" class="bi bi-bar-chart-fill text-xs text-brand-blue"></i>
+                    </div>
+
+                    <div class="space-y-1">
+                        <a href="{{ route('feedbacks.index') }}" class="sidebar-link group"
+                            :class="[
+                                {{ request()->routeIs('feedbacks.*') ? 'true' : 'false' }} ?
+                                'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
+                                'sidebar-link-inactive',
+                                sidebarCollapsed ? 'justify-center px-2' : ''
+                            ]"
+                            title="Feedbacks">
+                            <i
+                                class="bi bi-chat-right-quote-fill text-lg {{ request()->routeIs('feedbacks.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Feedback</span>
+                        </a>
+
+                        @if (\App\Models\ReportPermission::hasAnyAccess(Auth::user()->role))
+                            <a href="{{ route('reports.index') }}" class="sidebar-link group"
                                 :class="[
-                                    {{ request()->routeIs('authorizations.*') ? 'true' : 'false' }} ?
+                                    {{ request()->routeIs('reports.index') ? 'true' : 'false' }} ?
                                     'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
                                     'sidebar-link-inactive',
                                     sidebarCollapsed ? 'justify-center px-2' : ''
                                 ]"
-                                title="Authorizations">
+                                title="Reports">
                                 <i
-                                    class="bi bi-key-fill text-lg {{ request()->routeIs('authorizations.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Authorizations</span>
-                            </a>
-
-                            <a href="{{ route('report-permissions.index') }}" class="sidebar-link group"
-                                :class="[
-                                    {{ request()->routeIs('report-permissions.*') ? 'true' : 'false' }} ?
-                                    'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
-                                    'sidebar-link-inactive',
-                                    sidebarCollapsed ? 'justify-center px-2' : ''
-                                ]"
-                                title="Report Access">
-                                <i
-                                    class="bi bi-shield-lock text-lg {{ request()->routeIs('report-permissions.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Report Access</span>
+                                    class="bi bi-file-earmark-bar-graph-fill text-lg {{ request()->routeIs('reports.index') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Reports</span>
                             </a>
                         @endif
+                    </div>
+                </div>
+            @endif
 
+            <!-- SECTION: SYSTEM -->
+            @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                <div>
+                    <div class="mt-3 mb-2 font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 transition-all duration-300"
+                        :class="sidebarCollapsed ? 'justify-center text-[0px]' : 'px-4 text-[10px]'">
+                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">SYSTEM</span>
+                        <div class="h-px bg-blue-200 dark:bg-blue-900/50 flex-1" x-show="!sidebarCollapsed"></div>
+                        <i x-show="sidebarCollapsed" class="bi bi-gear-fill text-xs text-brand-blue"></i>
+                    </div>
+
+                    <div class="space-y-1">
                         <a href="{{ route('scan.index') }}" class="sidebar-link group"
                             :class="[
                                 {{ request()->routeIs('scan.*') ? 'true' : 'false' }} ?
@@ -244,6 +238,32 @@
                         </a>
 
                         @if (Auth::user()->hasRole('top_management'))
+                            <a href="{{ route('authorizations.index') }}" class="sidebar-link group"
+                                :class="[
+                                    {{ request()->routeIs('authorizations.*') ? 'true' : 'false' }} ?
+                                    'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
+                                    'sidebar-link-inactive',
+                                    sidebarCollapsed ? 'justify-center px-2' : ''
+                                ]"
+                                title="Authorizations">
+                                <i
+                                    class="bi bi-shield-lock-fill text-lg {{ request()->routeIs('authorizations.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Authorizations</span>
+                            </a>
+
+                            <a href="{{ route('report-permissions.index') }}" class="sidebar-link group"
+                                :class="[
+                                    {{ request()->routeIs('report-permissions.*') ? 'true' : 'false' }} ?
+                                    'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
+                                    'sidebar-link-inactive',
+                                    sidebarCollapsed ? 'justify-center px-2' : ''
+                                ]"
+                                title="Report Access">
+                                <i
+                                    class="bi bi-eye-slash-fill text-lg {{ request()->routeIs('report-permissions.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                                <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Report Access</span>
+                            </a>
+
                             <a href="{{ route('export_import.index') }}" class="sidebar-link group"
                                 :class="[
                                     {{ request()->routeIs('export_import.*') ? 'true' : 'false' }} ?
