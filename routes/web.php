@@ -129,7 +129,7 @@ Route::middleware(['auth'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['checkRole:top_management,board'])->group(function () {
-        Route::get('/sessions/{session}/feedback-results', [SessionController::class, 'feedbackResults'])->name('sessions.feedback-results');
+        // Route::get('/sessions/{session}/feedback-results', [SessionController::class, 'feedbackResults'])->name('sessions.feedback-results'); // Moved to common
     });
 
     /*
@@ -140,8 +140,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
         Route::get('/sessions/{session}', [SessionController::class, 'show'])->name('sessions.show');
-        Route::get('/sessions/{session}/feedback/create', [SessionController::class, 'createFeedback'])->name('sessions.feedback.create');
+        Route::get('/sessions/{session}/feedback/create', [App\Http\Controllers\SessionFeedbackController::class, 'create'])->name('sessions.feedback.create');
         Route::post('/sessions/{session}/feedback', [App\Http\Controllers\SessionFeedbackController::class, 'store'])->name('sessions.feedback');
+        Route::get('/sessions/{session}/feedback-results', [App\Http\Controllers\SessionFeedbackController::class, 'show'])->name('sessions.feedback-results');
     });
 
     /*
@@ -184,7 +185,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/committee-performance', [ReportController::class, 'committeePerformance'])->name('reports.committee_performance');
         Route::get('/reports/top-performers', [ReportController::class, 'topPerformers'])->name('reports.top_performers');
         Route::get('/reports/session-quality', [ReportController::class, 'sessionQuality'])->name('reports.session_quality');
-        Route::get('/reports/session-quality/{session}', [ReportController::class, 'showSessionFeedback'])->name('reports.feedback_details');
+        Route::get('/reports/session-quality/{session}', [App\Http\Controllers\SessionFeedbackController::class, 'show'])->name('reports.feedback_details');
+        Route::get('/feedbacks', [App\Http\Controllers\SessionFeedbackController::class, 'index'])->name('feedbacks.index');
         Route::get('/reports/attendance-trends', [ReportController::class, 'attendanceTrends'])->name('reports.attendance_trends');
         Route::get('/reports/member', [ReportController::class, 'member'])->name('reports.member');
 

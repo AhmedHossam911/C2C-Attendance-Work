@@ -146,6 +146,19 @@
                                 <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Reports</span>
                             </a>
                         @endif
+
+                        <a href="{{ route('feedbacks.index') }}" class="sidebar-link group"
+                            :class="[
+                                {{ request()->routeIs('feedbacks.*') ? 'true' : 'false' }} ?
+                                'sidebar-link-active !text-brand-teal bg-teal-50 dark:bg-teal-900/10' :
+                                'sidebar-link-inactive',
+                                sidebarCollapsed ? 'justify-center px-2' : ''
+                            ]"
+                            title="Feedbacks">
+                            <i
+                                class="bi bi-chat-right-quote-fill text-lg {{ request()->routeIs('feedbacks.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
+                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Feedbacks</span>
+                        </a>
                     </div>
                 </div>
             @endif
