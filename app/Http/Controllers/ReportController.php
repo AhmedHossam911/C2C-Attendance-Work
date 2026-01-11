@@ -207,10 +207,47 @@ class ReportController extends Controller
             $committees = Committee::orderBy('name')->get();
         }
 
-        $performers = $query->orderByDesc('attendance_records_count')
-            ->orderByDesc('task_submissions_count')
-            ->paginate(20)
-            ->withQueryString(); // Use paginate instead of take/get
+        // Get all performers and calculate total score
+        $allPerformers = $query->get();
+
+        // Calculate total score for each performer
+        $allPerformers->each(function ($performer) {
+            $performer->total_score = $performer->attendance_records_count + $performer->task_submissions_count;
+        });
+
+        // Sort by total score (highest first), then by name (A-Z) for ties
+        $allPerformers = $allPerformers->sortBy([
+            ['total_score', 'desc'],
+            ['name', 'asc']
+        ])->values();
+
+        // Calculate ranks with ties (same score = same rank)
+        $currentRank = 0;
+        $previousScore = null;
+        $skipCount = 0;
+
+        $allPerformers->each(function ($performer) use (&$currentRank, &$previousScore, &$skipCount) {
+            if ($previousScore !== $performer->total_score) {
+                $currentRank += $skipCount + 1;
+                $skipCount = 0;
+            } else {
+                $skipCount++;
+            }
+
+            $performer->rank = $currentRank;
+            $previousScore = $performer->total_score;
+        });
+
+        // Paginate manually
+        $page = $request->get('page', 1);
+        $perPage = 20;
+        $performers = new LengthAwarePaginator(
+            $allPerformers->forPage($page, $perPage),
+            $allPerformers->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return view('Heads.Reports.top_performers', compact('performers', 'committees'));
     }

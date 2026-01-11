@@ -8,9 +8,8 @@
                 <i class="bi bi-chevron-right text-xs opacity-50"></i>
                 <span class="text-slate-800 dark:text-slate-200">Top Performers</span>
             </div>
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Top Performers
-            </h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Our most dedicated and active members.</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Top Performers</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Members ranked by total engagement score.</p>
         </div>
 
         <x-card class="p-1 md:p-2 bg-white dark:bg-slate-800 border-0 shadow-sm">
@@ -31,118 +30,145 @@
         </x-card>
     </div>
 
+    {{-- How Scoring Works --}}
+    <div
+        class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-teal-50 dark:from-slate-800 dark:to-slate-800 rounded-xl border border-blue-100 dark:border-slate-700">
+        <div class="flex items-start gap-3">
+            <div
+                class="shrink-0 h-10 w-10 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm">
+                <i class="bi bi-info-circle text-lg" style="color: #949bb0;"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-800 dark:text-slate-100 mb-1">How is the score calculated?</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                    <span class="font-semibold" style="color: #949bb0;">Score</span> =
+                    <span class="font-semibold" style="color: #949bb0;">Sessions Attended</span> +
+                    <span class="font-semibold" style="color: #949bb0;">Tasks Submitted</span>.
+                    Members are ranked by total score, then alphabetically by name.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         @if ($performers->isNotEmpty())
             {{-- Podium (Top 3 on Page 1 only) --}}
             @if (request('page', 1) == 1)
-                <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 items-end mb-8 mt-4 md:mt-8">
+                <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 items-stretch mb-8">
 
                     {{-- 2nd Place --}}
                     @if (isset($performers[1]))
-                        <x-card
-                            class="relative order-2 sm:order-1 mt-8 sm:mt-0 border-t-4 border-t-slate-400 flex flex-col items-center text-center p-6 bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/50">
-                            <div class="absolute -top-5">
+                        <div
+                            class="order-2 sm:order-1 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-4">
                                 <div
-                                    class="h-10 w-10 rounded-full bg-slate-300 border-4 border-white dark:border-slate-800 flex items-center justify-center text-lg font-bold text-slate-600 shadow-lg">
-                                    2
+                                    class="h-10 w-10 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-lg font-bold text-white shadow">
+                                    {{ $performers[1]->rank }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-slate-800 dark:text-white truncate">{{ $performers[1]->name }}
+                                    </h3>
+                                    <p class="text-xs text-slate-400 uppercase tracking-wide">Silver</p>
                                 </div>
                             </div>
-                            <div class="mt-4 mb-2">
-                                <div
-                                    class="h-14 w-14 mx-auto rounded-full bg-slate-200/50 flex items-center justify-center text-xl font-bold text-slate-500 mb-3 shadow-inner">
-                                    {{ substr($performers[1]->name, 0, 1) }}
-                                </div>
-                                <h3 class="font-bold text-slate-800 dark:text-slate-100 truncate w-full px-2">
-                                    {{ $performers[1]->name }}</h3>
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Silver Medalist</p>
+                            <div class="text-center py-4 mb-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                                <span
+                                    class="block text-4xl font-black text-slate-800 dark:text-white">{{ $performers[1]->total_score }}</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider">Total Score</span>
                             </div>
-                            <div
-                                class="flex gap-3 text-xs mt-3 w-full justify-center bg-white dark:bg-slate-700/50 py-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                                <div class="text-center">
+                            <div class="flex justify-around text-center">
+                                <div>
                                     <span
-                                        class="block font-bold text-brand-blue text-base">{{ $performers[1]->attendance_records_count }}</span>
-                                    <span class="text-[9px] text-slate-400 uppercase">Visits</span>
+                                        class="block text-lg font-bold text-brand-blue">{{ $performers[1]->attendance_records_count }}</span>
+                                    <span class="text-[10px] text-slate-400 uppercase">Sessions</span>
                                 </div>
                                 <div class="w-px bg-slate-200 dark:bg-slate-600"></div>
-                                <div class="text-center">
+                                <div>
                                     <span
-                                        class="block font-bold text-brand-teal text-base">{{ $performers[1]->task_submissions_count }}</span>
-                                    <span class="text-[9px] text-slate-400 uppercase">Tasks</span>
+                                        class="block text-lg font-bold text-brand-teal">{{ $performers[1]->task_submissions_count }}</span>
+                                    <span class="text-[10px] text-slate-400 uppercase">Tasks</span>
                                 </div>
                             </div>
-                        </x-card>
+                        </div>
                     @endif
 
                     {{-- 1st Place --}}
                     @if (isset($performers[0]))
-                        <x-card
-                            class="relative order-1 sm:order-2 border-t-4 border-t-brand-gold flex flex-col items-center text-center p-8 transform sm:-translate-y-4 z-10 shadow-xl bg-gradient-to-b from-white to-amber-50/30 dark:from-slate-800 dark:to-amber-900/10">
-                            <div class="absolute -top-7">
-                                <div
-                                    class="h-14 w-14 rounded-full bg-brand-gold border-4 border-white dark:border-slate-800 flex items-center justify-center text-2xl font-bold text-white shadow-xl">
-                                    1
-                                </div>
+                        <div
+                            class="order-1 sm:order-2 bg-gradient-to-br from-amber-50 to-white dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 border-2 border-amber-300 dark:border-amber-600 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
+                            <div
+                                class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-200/30 to-transparent rounded-bl-full">
                             </div>
-                            <div class="mt-6 mb-4">
+                            <div class="flex items-center gap-3 mb-4 relative">
                                 <div
-                                    class="h-24 w-24 mx-auto rounded-full bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900 dark:to-amber-800 flex items-center justify-center text-4xl font-bold text-amber-700 dark:text-amber-400 mb-4 border-4 border-white dark:border-slate-700 shadow-lg">
-                                    {{ substr($performers[0]->name, 0, 1) }}
+                                    class="h-12 w-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-xl font-bold text-white shadow-lg">
+                                    <i class="bi bi-trophy-fill"></i>
                                 </div>
-                                <h3 class="text-xl font-bold text-slate-900 dark:text-white truncate w-full px-2">
-                                    {{ $performers[0]->name }}</h3>
-                                <p class="text-xs text-brand-gold font-bold uppercase tracking-[0.2em] mt-1">Champion</p>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-lg text-slate-900 dark:text-white truncate">
+                                        {{ $performers[0]->name }}</h3>
+                                    <p class="text-xs text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wide">
+                                        Champion</p>
+                                </div>
                             </div>
                             <div
-                                class="grid grid-cols-2 gap-4 w-full bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl border border-dashed border-amber-200 dark:border-amber-900">
-                                <div class="text-center">
+                                class="text-center py-5 mb-4 bg-gradient-to-r from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-slate-700/50 rounded-xl border border-amber-200 dark:border-amber-800">
+                                <span
+                                    class="block text-5xl font-black text-amber-700 dark:text-amber-400">{{ $performers[0]->total_score }}</span>
+                                <span
+                                    class="text-xs text-amber-600 dark:text-amber-500 uppercase tracking-wider font-semibold">Total
+                                    Score</span>
+                            </div>
+                            <div class="flex justify-around text-center">
+                                <div>
                                     <span
-                                        class="block font-black text-2xl text-brand-blue">{{ $performers[0]->attendance_records_count }}</span>
-                                    <span
-                                        class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Attended</span>
+                                        class="block text-xl font-bold text-brand-blue">{{ $performers[0]->attendance_records_count }}</span>
+                                    <span class="text-[10px] text-slate-500 uppercase">Sessions</span>
                                 </div>
-                                <div class="text-center border-l border-slate-200 dark:border-slate-600">
+                                <div class="w-px bg-amber-200 dark:bg-slate-600"></div>
+                                <div>
                                     <span
-                                        class="block font-black text-2xl text-brand-teal">{{ $performers[0]->task_submissions_count }}</span>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Tasks</span>
+                                        class="block text-xl font-bold text-brand-teal">{{ $performers[0]->task_submissions_count }}</span>
+                                    <span class="text-[10px] text-slate-500 uppercase">Tasks</span>
                                 </div>
                             </div>
-                        </x-card>
+                        </div>
                     @endif
 
                     {{-- 3rd Place --}}
                     @if (isset($performers[2]))
-                        <x-card
-                            class="relative order-3 mt-8 sm:mt-0 border-t-4 border-t-amber-700 flex flex-col items-center text-center p-6 bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-800/50">
-                            <div class="absolute -top-5">
+                        <div
+                            class="order-3 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-3 mb-4">
                                 <div
-                                    class="h-10 w-10 rounded-full bg-amber-800 border-4 border-white dark:border-slate-800 flex items-center justify-center text-lg font-bold text-white shadow-lg">
-                                    3
+                                    class="h-10 w-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-lg font-bold text-white shadow">
+                                    {{ $performers[2]->rank }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-bold text-slate-800 dark:text-white truncate">
+                                        {{ $performers[2]->name }}</h3>
+                                    <p class="text-xs text-slate-400 uppercase tracking-wide">Bronze</p>
                                 </div>
                             </div>
-                            <div class="mt-4 mb-2">
-                                <div
-                                    class="h-14 w-14 mx-auto rounded-full bg-amber-100/50 flex items-center justify-center text-xl font-bold text-amber-900/60 mb-3 shadow-inner">
-                                    {{ substr($performers[2]->name, 0, 1) }}
-                                </div>
-                                <h3 class="font-bold text-slate-800 dark:text-slate-100 truncate w-full px-2">
-                                    {{ $performers[2]->name }}</h3>
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Bronze Medalist</p>
+                            <div class="text-center py-4 mb-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                                <span
+                                    class="block text-4xl font-black text-slate-800 dark:text-white">{{ $performers[2]->total_score }}</span>
+                                <span class="text-xs text-slate-500 uppercase tracking-wider">Total Score</span>
                             </div>
-                            <div
-                                class="flex gap-3 text-xs mt-3 w-full justify-center bg-white dark:bg-slate-700/50 py-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                                <div class="text-center">
+                            <div class="flex justify-around text-center">
+                                <div>
                                     <span
-                                        class="block font-bold text-brand-blue text-base">{{ $performers[2]->attendance_records_count }}</span>
-                                    <span class="text-[9px] text-slate-400 uppercase">Visits</span>
+                                        class="block text-lg font-bold text-brand-blue">{{ $performers[2]->attendance_records_count }}</span>
+                                    <span class="text-[10px] text-slate-400 uppercase">Sessions</span>
                                 </div>
                                 <div class="w-px bg-slate-200 dark:bg-slate-600"></div>
-                                <div class="text-center">
+                                <div>
                                     <span
-                                        class="block font-bold text-brand-teal text-base">{{ $performers[2]->task_submissions_count }}</span>
-                                    <span class="text-[9px] text-slate-400 uppercase">Tasks</span>
+                                        class="block text-lg font-bold text-brand-teal">{{ $performers[2]->task_submissions_count }}</span>
+                                    <span class="text-[10px] text-slate-400 uppercase">Tasks</span>
                                 </div>
                             </div>
-                        </x-card>
+                        </div>
                     @endif
                 </div>
             @endif
@@ -155,11 +181,17 @@
                         <thead
                             class="bg-slate-50 dark:bg-slate-900/50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700">
                             <tr>
-                                <th class="px-4 py-4 w-12 text-center">#</th>
-                                <th class="px-4 py-4">User</th>
-                                <th class="px-4 py-4 text-center">Attendance</th>
-                                <th class="px-4 py-4 text-center">Tasks</th>
-                                <th class="px-4 py-4 text-right"></th>
+                                <th class="px-4 py-4 w-12 text-center">Rank</th>
+                                <th class="px-4 py-4">Member</th>
+                                <th class="px-4 py-4 text-center">
+                                    <span class="hidden sm:inline">Sessions Attended</span>
+                                    <span class="sm:hidden">Sessions</span>
+                                </th>
+                                <th class="px-4 py-4 text-center">
+                                    <span class="hidden sm:inline">Tasks Submitted</span>
+                                    <span class="sm:hidden">Tasks</span>
+                                </th>
+                                <th class="px-4 py-4 text-center font-black">Score</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -174,20 +206,15 @@
                             @foreach ($loopItems as $index => $user)
                                 <tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                     <td class="px-4 py-4 text-center font-bold text-slate-400">
-                                        @if (request('page', 1) == 1)
-                                            {{ $index + 4 }}
-                                        @else
-                                            {{ $startIndex + $index + 1 }}
-                                        @endif
+                                        {{ $user->rank }}
                                     </td>
-
                                     <td
                                         class="px-4 py-4 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-3">
                                         <div
-                                            class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
+                                            class="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
                                             {{ substr($user->name, 0, 1) }}
                                         </div>
-                                        <span>{{ $user->name }}</span>
+                                        <span class="truncate">{{ $user->name }}</span>
                                     </td>
                                     <td class="px-4 py-4 text-center">
                                         <span
@@ -201,10 +228,11 @@
                                             {{ $user->task_submissions_count }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 text-right">
-                                        <a href="{{ route('reports.member', ['search' => $user->id]) }}"
-                                            class="text-slate-400 hover:text-brand-blue transition-colors"><i
-                                                class="bi bi-eye-fill"></i></a>
+                                    <td class="px-4 py-4 text-center">
+                                        <span
+                                            class="inline-flex items-center justify-center font-black text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-600 px-3 py-1 rounded-lg min-w-[3rem]">
+                                            {{ $user->total_score }}
+                                        </span>
                                     </td>
                                 </tr>
                             @endforeach

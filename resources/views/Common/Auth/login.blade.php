@@ -11,7 +11,7 @@
         <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm">Sign in to access your dashboard</p>
     </div>
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+    <form method="POST" action="{{ route('login') }}" class="space-y-6" x-data="{ loading: false }" @submit="loading = true">
         @csrf
 
         <!-- Email Address -->
@@ -71,9 +71,22 @@
         </div>
 
         <!-- Submit Button -->
-        <x-primary-button class="w-full justify-center py-3.5 group">
-            <span class="group-hover:tracking-wider transition-all duration-300">Sign In</span>
-            <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform ml-2"></i>
+        <x-primary-button class="w-full justify-center py-3.5 group relative" ::disabled="loading">
+            <div x-show="!loading" class="flex items-center">
+                <span class="group-hover:tracking-wider transition-all duration-300">Sign In</span>
+                <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform ml-2"></i>
+            </div>
+            <div x-show="loading" class="flex items-center absolute inset-0 justify-center" style="display: none;">
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                    </circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                <span>Signing In...</span>
+            </div>
         </x-primary-button>
     </form>
 @endsection
