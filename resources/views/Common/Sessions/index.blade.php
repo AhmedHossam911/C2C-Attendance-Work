@@ -4,7 +4,7 @@
             <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Attendance Sessions</h2>
             <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage and track attendance sessions</p>
         </div>
-        @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head', 'vice_head']))
+        @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
             <x-primary-button href="{{ route('sessions.create') }}"
                 class="flex items-center gap-2 shadow-lg shadow-brand-blue/20">
                 <i class="bi bi-plus-lg"></i>
@@ -15,7 +15,7 @@
 
     <!-- Filter Card (HR does NOT see this if they only have 1 committee, but for now we keep it conditional or general) -->
     <!-- User said: "without filter options for HR becanuse he manage one authed session" -->
-    @if (!Auth::user()->hasRole('hr'))
+    @if (!Auth::user()->hasRole('hr') && !Auth::user()->hasRole('committee_head') && !Auth::user()->hasRole('vice_head'))
         <x-card class="mb-8 border-none ring-1 ring-slate-200/50 dark:ring-slate-700/50">
             <x-slot name="header">
                 <h3 class="font-bold text-base text-slate-800 dark:text-white flex items-center gap-2">
@@ -143,15 +143,17 @@
                                         title="Export Excel">
                                         <i class="bi bi-file-earmark-excel-fill"></i>
                                     </a>
-                                    <form action="{{ route('sessions.toggle', $session) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="p-2 rounded-lg transition-colors {{ $session->status === 'open' ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/40' }}"
-                                            title="{{ $session->status === 'open' ? 'Close Session' : 'Open Session' }}">
-                                            <i
-                                                class="bi bi-{{ $session->status === 'open' ? 'stop-fill' : 'play-fill' }}"></i>
-                                        </button>
-                                    </form>
+                                    @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                                        <form action="{{ route('sessions.toggle', $session) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="p-2 rounded-lg transition-colors {{ $session->status === 'open' ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/40' }}"
+                                                title="{{ $session->status === 'open' ? 'Close Session' : 'Open Session' }}">
+                                                <i
+                                                    class="bi bi-{{ $session->status === 'open' ? 'stop-fill' : 'play-fill' }}"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </x-table.td>
                         </x-table.tr>
@@ -226,14 +228,18 @@
                             class="flex items-center justify-center gap-2 px-3 py-2.5 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 rounded-xl font-bold text-sm hover:bg-green-100 transition-colors">
                             <i class="bi bi-download"></i> Excel
                         </a>
-                        <form action="{{ route('sessions.toggle', $session) }}" method="POST" class="col-span-2">
-                            @csrf
-                            <button type="submit"
-                                class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl font-bold text-sm transition-colors {{ $session->status === 'open' ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400' }}">
-                                <i class="bi bi-{{ $session->status === 'open' ? 'stop-fill' : 'play-fill' }}"></i>
-                                {{ $session->status === 'open' ? 'Close Session' : 'Open Session' }}
-                            </button>
-                        </form>
+                        @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr']))
+                            <form action="{{ route('sessions.toggle', $session) }}" method="POST"
+                                class="col-span-2">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl font-bold text-sm transition-colors {{ $session->status === 'open' ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400' }}">
+                                    <i
+                                        class="bi bi-{{ $session->status === 'open' ? 'stop-fill' : 'play-fill' }}"></i>
+                                    {{ $session->status === 'open' ? 'Close Session' : 'Open Session' }}
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </x-card>
             @empty

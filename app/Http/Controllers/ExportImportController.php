@@ -56,9 +56,16 @@ class ExportImportController extends Controller
     {
         $request->validate([
             'committee_id' => 'required|exists:committees,id',
+            'session_id' => 'nullable|exists:attendance_sessions,id',
         ]);
 
         $committee = Committee::findOrFail($request->committee_id);
+        
+        $sessionName = null;
+        if($request->session_id){
+             $session = AttendanceSession::find($request->session_id);
+             $sessionName = $session ? $session->title : null;
+        }
 
         $user = Auth::user();
         if ($user->hasRole('hr')) {
@@ -69,23 +76,13 @@ class ExportImportController extends Controller
 
         $users = $committee->users;
 
-        // 1. Generate Excel Data
-        $data = [];
+        // 1. Generate Data
         $tempDir = storage_path('app/temp_qrs_' . time());
         if (!file_exists($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
         foreach ($users as $user) {
-            // Filename: Member Name.svg
-            $qrFilename = "{$user->name}.svg";
-            // Sanitize filename
-            $qrFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $qrFilename);
-            $qrPath = $tempDir . '/' . $qrFilename;
-
-            // Generate QR as SVG File
-            QrCode::format('svg')->size(300)->generate($user->id, $qrPath);
-
             // Generate QR as SVG String for embedding in HTML
             $qrSvgString = QrCode::format('svg')->size(300)->generate($user->id);
 
@@ -94,41 +91,13 @@ class ExportImportController extends Controller
             $htmlFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $htmlFilename);
             $htmlPath = $tempDir . '/' . $htmlFilename;
 
-            // Generate PDF File
-            $pdfFilename = "{$user->name}.pdf";
-            $pdfFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $pdfFilename);
-            $pdfPath = $tempDir . '/' . $pdfFilename;
-
             $viewData = [
                 'member_name' => $user->name,
                 'committee_name' => $committee->name,
-                'session_name' => null
+                'session_name' => $sessionName
             ];
             $htmlContent = view('Common.Emails.qr_code', ['data' => $viewData, 'qrCode' => $qrSvgString])->render();
             file_put_contents($htmlPath, $htmlContent);
-
-            // Save PDF
-            Pdf::loadHTML($htmlContent)->setPaper('a4', 'portrait')->save($pdfPath);
-
-            // Generate Mailto Link
-            $qrUrl = URL::signedRoute('qr.view', ['user' => $user->id]);
-            $subject = 'Membership QR - ' . $committee->name;
-            $body = "Hello {$user->name},\n\nHere is your membership QR code link:\n{$qrUrl}\n\nPlease click the link to view your QR code page.\n\nPlease keep it safe.\n\nBest regards,";
-            $mailtoLink = 'https://mail.google.com/mail/?view=cm&fs=1&to=' . $user->email . '&su=' . urlencode($subject) . '&body=' . urlencode($body);
-
-            $data[] = [
-                'committee_id' => $committee->id,
-                'committee_name' => $committee->name,
-                'member_id' => $user->id,
-                'member_name' => $user->name,
-                'email' => $user->email,
-                'qr_filename' => $qrFilename,
-                'html_filename' => $htmlFilename,
-                'pdf_filename' => $pdfFilename,
-                'mailto_link' => $mailtoLink,
-                'html_body' => $htmlContent,
-                'qr_generated_at' => now()->toDateTimeString(),
-            ];
         }
 
         // Create ZIP
@@ -137,37 +106,12 @@ class ExportImportController extends Controller
         $zip = new ZipArchive;
 
         if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
-            // Add Excel File
-            $csvFile = fopen($tempDir . '/data.csv', 'w');
-            fputcsv($csvFile, array_keys($data[0])); // Headers
-            foreach ($data as $row) {
-                fputcsv($csvFile, $row);
-            }
-            fclose($csvFile);
-
-            $zip->addFile($tempDir . '/data.csv', 'data.csv');
-
-            // Add Images and HTML files
+            // Add HTML files
             foreach ($users as $user) {
-                // Add SVG
-                $qrFilename = "{$user->name}.svg";
-                $qrFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $qrFilename);
-                if (file_exists($tempDir . '/' . $qrFilename)) {
-                    $zip->addFile($tempDir . '/' . $qrFilename, $qrFilename);
-                }
-
-                // Add HTML
                 $htmlFilename = "{$user->name}.html";
                 $htmlFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $htmlFilename);
                 if (file_exists($tempDir . '/' . $htmlFilename)) {
                     $zip->addFile($tempDir . '/' . $htmlFilename, $htmlFilename);
-                }
-
-                // Add PDF
-                $pdfFilename = "{$user->name}.pdf";
-                $pdfFilename = preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $pdfFilename);
-                if (file_exists($tempDir . '/' . $pdfFilename)) {
-                    $zip->addFile($tempDir . '/' . $pdfFilename, $pdfFilename);
                 }
             }
 

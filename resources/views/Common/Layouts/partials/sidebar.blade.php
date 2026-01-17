@@ -80,10 +80,10 @@
                             'sidebar-link-inactive',
                             sidebarCollapsed ? 'justify-center px-2' : ''
                         ]"
-                        title="My Tasks">
+                        title="Tasks Management">
                         <i
                             class="bi bi-list-check text-lg {{ request()->routeIs('tasks.*') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">My Tasks</span>
+                        <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Tasks management</span>
                     </a>
 
                     @if (in_array(Auth::user()->role, ['top_management', 'board', 'hr', 'committee_head']))
@@ -94,10 +94,10 @@
                                 'sidebar-link-inactive',
                                 sidebarCollapsed ? 'justify-center px-2' : ''
                             ]"
-                            title="My Sessions">
+                            title="Sessions Management">
                             <i
                                 class="bi bi-calendar-event text-lg {{ request()->routeIs('sessions.index') ? '!text-brand-teal' : 'text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-200' }}"></i>
-                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">My Sessions</span>
+                            <span x-show="!sidebarCollapsed" class="whitespace-nowrap">Sessions Management</span>
                         </a>
                     @endif
 

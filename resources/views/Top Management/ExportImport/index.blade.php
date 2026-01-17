@@ -61,6 +61,7 @@
                                 <li><strong>committees:</strong> Names separated by commas (e.g., "IT, HR")</li>
                                 <li><strong>role:</strong> top_management, board, hr, or member</li>
                                 <li><strong>status:</strong> active or pending</li>
+                                <li><strong>authorized_committees:</strong> (For HR) Names separated by commas</li>
                             </ul>
                         </div>
                     </div>
@@ -79,7 +80,7 @@
             </form>
         </x-card>
 
-        <!-- Export QRs & Data Card -->
+        <!-- Export HTML QRs Card -->
         <x-card>
             <x-slot name="header">
                 <div class="flex items-center gap-3">
@@ -87,8 +88,8 @@
                         <i class="bi bi-download text-blue-600 dark:text-blue-400 text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Export QRs & Data</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Download QR codes as ZIP</p>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100">Export HTML QRs</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Download styled QR codes as ZIP</p>
                     </div>
                 </div>
             </x-slot>
@@ -107,6 +108,18 @@
                     </x-select-input>
                 </div>
 
+                <div>
+                    <x-input-label class="mb-2">
+                        <i class="bi bi-calendar-event text-slate-400 mr-1"></i> Select Session (Optional)
+                    </x-input-label>
+                    <x-select-input name="session_id">
+                        <option value="">-- No Session --</option>
+                        @foreach ($sessions as $session)
+                            <option value="{{ $session->id }}">{{ $session->title }}</option>
+                        @endforeach
+                    </x-select-input>
+                </div>
+
                 <div
                     class="p-4 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-sm">
                     <div class="flex items-start gap-3">
@@ -116,8 +129,8 @@
                         <div class="text-slate-600 dark:text-slate-400">
                             <strong class="block mb-1 text-slate-800 dark:text-slate-200">ZIP Contents:</strong>
                             <ul class="list-disc list-inside space-y-1">
-                                <li>Excel file with member data</li>
-                                <li>QR code images for each member</li>
+                                <li>HTML files with styled QR codes</li>
+                                <li>One file per member</li>
                             </ul>
                         </div>
                     </div>
@@ -125,7 +138,7 @@
 
                 <div class="pt-2">
                     <x-primary-button type="submit" class="w-full justify-center py-3">
-                        <i class="bi bi-file-zip mr-2"></i> Download ZIP (Excel + Images)
+                        <i class="bi bi-file-zip mr-2"></i> Download ZIP (HTML QRs)
                     </x-primary-button>
                 </div>
             </form>

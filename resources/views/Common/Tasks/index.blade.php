@@ -255,11 +255,6 @@
                                                                 class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
                                                                 Submitted
                                                             </span>
-                                                        @else
-                                                            <span
-                                                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
-                                                                Pending
-                                                            </span>
                                                         @endif
                                                     </div>
                                                 </div>

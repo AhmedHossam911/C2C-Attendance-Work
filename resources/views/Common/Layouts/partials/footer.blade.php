@@ -8,9 +8,7 @@
                 <span>Developed by</span>
                 <a href="https://linktr.ee/Ahmed_911" target="_blank"
                     class="font-bold text-c2c-blue-600 dark:text-blue-400 hover:text-c2c-teal-600 dark:hover:text-teal-400 flex items-center gap-1 transition-colors">
-                    Ahmed Hossam
-                    <span
-                        class="text-blue-700 dark:text-blue-300 text-[10px] px-1.5 py-0.5 rounded ml-1 bg-c2c-blue-50 dark:bg-blue-900/30">President</span>
+                    Ahmed Hossam C2C president
                 </a>
             </div>
 
