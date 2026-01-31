@@ -69,7 +69,7 @@
         @elseif(isset($memberStats))
             <div x-show="show" x-transition:enter="transition ease-out duration-700 delay-100"
                 x-transition:enter-start="opacity-0 translateY-10" x-transition:enter-end="opacity-100 translateY-0"
-                class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 
                 <x-stats-card title="Pending Tasks" value="{{ $memberStats['pending_tasks'] }}" icon="bi-list-task"
                     color="brand-blue" />
