@@ -3,8 +3,9 @@
         Review Submission
     </h2>
 
-    <form method="POST" x-bind:action="'/submissions/' + submissionId + '/review'" class="space-y-4">
+    <form method="POST" x-bind:action="'/submissions/' + submissionId" class="space-y-4">
         @csrf
+        @method('PATCH')
         {{-- Status --}}
         <div>
             <x-input-label for="status" value="Status" />
